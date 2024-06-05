@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.practice.EmployeeDashboardController">
+
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <Button text="View Total Earnings" onAction="#calculateEarnings"/>
+            <Button text="View Payment History" onAction="#handleViewSalaryButtonAction"/>
+            <Button text="Search User by ID" onAction="#searchUserById"/>
+            <Button text="Search User by Salary Type" onAction="#searchUserBySalaryType"/>
+            <Button text="Show All Employees" onAction="#showAllEmployees"/>
+            <Button text="Show All Managers" onAction="#showAllManagers"/>
+            <Button text="Update Profile" onAction="#updateProfile"/>
+            <Button text="Log Out" onAction="#handleLogoutButtonAction"/>
+        </VBox>
+    </center>
+
+</BorderPane>

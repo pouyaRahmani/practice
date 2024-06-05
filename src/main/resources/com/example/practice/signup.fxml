@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import java.lang.Boolean?>
+<?import java.lang.String?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.practice.SignUpController">
+
+    <children>
+        <GridPane alignment="CENTER" hgap="10" vgap="10">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
+
+            <Label text="First Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="firstNameTextField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Last Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="lastNameTextField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="SSN:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="ssnTextField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Birth Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="birthDatePicker" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Username:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="usernameTextField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <Label text="Password:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <PasswordField fx:id="passwordTextField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Label text="Confirm Password:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <PasswordField fx:id="confirmPasswordTextField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+            <Label text="Department ID:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <TextField fx:id="departmentIdTextField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+            <Label text="Is Manager:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="managerComboBox" GridPane.rowIndex="8" GridPane.columnIndex="1">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Boolean fx:value="true"/>
+                        <Boolean fx:value="false"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <Label text="Salary Type:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="salaryTypeComboBox" GridPane.rowIndex="9" GridPane.columnIndex="1">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Fixed"/>
+                        <String fx:value="Hourly"/>
+                        <String fx:value="Commission"/>
+                        <String fx:value="Base Plus Commission"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <Label text="Salary 1:" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+            <TextField fx:id="salaryField1" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+
+            <Label text="Salary 2:" GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+            <TextField fx:id="salaryField2" GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+
+            <Label text="Salary 3:" GridPane.rowIndex="12" GridPane.columnIndex="0"/>
+            <TextField fx:id="salaryField3" GridPane.rowIndex="12" GridPane.columnIndex="1"/>
+
+            <Label text="Employee ID:" GridPane.rowIndex="13" GridPane.columnIndex="0"/>
+            <TextField fx:id="employeeIdTextField" GridPane.rowIndex="13" GridPane.columnIndex="1"/>
+
+            <Label text="Salary Start Date:" GridPane.rowIndex="14" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="salaryStartDatePicker" GridPane.rowIndex="14" GridPane.columnIndex="1"/>
+
+            <Label text="Salary End Date:" GridPane.rowIndex="15" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="salaryEndDatePicker" GridPane.rowIndex="15" GridPane.columnIndex="1"/>
+
+            <Label text="Is Active Salary:" GridPane.rowIndex="16" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="activeSalaryComboBox" GridPane.rowIndex="16" GridPane.columnIndex="1">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Boolean fx:value="true"/>
+                        <Boolean fx:value="false"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <HBox spacing="10" GridPane.rowIndex="17" GridPane.columnIndex="1">
+                <Button text="Sign Up" onAction="#onSignUpButtonClick"/>
+                <Button text="Back to Login" onAction="#switchToLogin"/>
+            </HBox>
+        </GridPane>
+    </children>
+</VBox>

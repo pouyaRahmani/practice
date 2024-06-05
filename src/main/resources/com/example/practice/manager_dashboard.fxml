@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="300" prefWidth="400" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practice.ManagerDashboardController">
+
+    <Label text="Manager Dashboard" />
+
+    <HBox>
+        <Button fx:id="calculateEarnings" onAction="#calculateEarnings" text="View Total Earnings by ID" />
+        <Button fx:id="viewPaymentHistory" onAction="#viewPaymentHistory" text="View Payment History" />
+        <Button fx:id="searchUserById" onAction="#searchUserById" text="Search User by ID" />
+    </HBox>
+
+    <HBox>
+        <Button fx:id="searchUserBySalaryType" onAction="#searchUserBySalaryType" text="Search User by Salary Type" />
+        <Button fx:id="archiveUser" onAction="#archiveUser" text="Archive User" />
+        <Button fx:id="changeSalary" onAction="#changeSalary" text="Change Salary" />
+    </HBox>
+
+    <HBox>
+        <Button fx:id="showAllEmployees" onAction="#showAllEmployees" text="Show All Employees" />
+        <Button fx:id="showAllManagers" onAction="#showAllManagers" text="Show All Managers" />
+        <Button fx:id="updateProfile" onAction="#updateProfile" text="Update Profile" />
+    </HBox>
+    <Button fx:id="logOut" onAction="#handleLogoutButtonAction" text="Log Out" />
+</VBox>
