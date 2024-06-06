@@ -1,10 +1,10 @@
 package com.example.practice;
 
-
-
 import java.io.Serializable;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -14,16 +14,13 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.HashSet;
-
 
 public class Employee implements Serializable {
     private String firstName;
     private String lastName;
     private String socialSecurityNumber;
     private Date birthDate;
-    private static String userName;
+    private String userName;
     private String password;
     private int id;
     private int departmentId;
@@ -46,12 +43,6 @@ public class Employee implements Serializable {
         this.isArchived = isArchived;
         this.status = status;
         this.salaries = new ArrayList<>();
-    }
-
-    public Employee(String firstName, String lastName, String ssn, LocalDate birthDate, String username, String password, int id, int departmentId, boolean isManager, boolean isArchived, Activity activityStatus) {
-    }
-
-    public Employee(String firstName, String lastName, String ssn, Date birthDate, String username, String password, int id, int departmentId, boolean isManager, Salary salary) {
     }
 
     public Employee(String firstName, String lastName, String ssn, Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, String employeeId, Date salaryStartDate, Date salaryEndDate, boolean isActive) {
@@ -82,6 +73,7 @@ public class Employee implements Serializable {
     public int getId() {
         return id;
     }
+
     public String getUserName() {
         return userName;
     }
@@ -160,7 +152,6 @@ public class Employee implements Serializable {
         return managerList;
     }
 
-    // Archive employee with given id and set status based on user input
     public static void archiveEmployee(int id, String filename) {
         Set<Employee> employees = readEmployeesFromFile(filename);
         Scanner scanner = new Scanner(System.in);
@@ -238,7 +229,6 @@ public class Employee implements Serializable {
         }
     }
 
-    // Update profile for employees and managers based on Id and filename
     public static void updateProfile(String filename) {
         Scanner scanner = new Scanner(System.in);
         Set<Employee> employees = readEmployeesFromFile(filename);
@@ -312,7 +302,6 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-
         // Find the active salary for the employee
         Salary activeSalary = null;
         for (Salary salary : salaries) {
