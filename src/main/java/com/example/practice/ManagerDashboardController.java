@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
-import java.sql.Date;  // Import Date class from java.sql
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -64,10 +63,10 @@ public class ManagerDashboardController {
                     changeSalary();
                     break;
                 case 7:
-                    Employee.showAllEmployees();
+                    Employee.showAllEmployees(FILENAME);
                     break;
                 case 8:
-                    Employee.showAllManagers();
+                    Employee.showAllManagers(FILENAME);
                     break;
                 case 9:
                     Employee.updateProfile(FILENAME);

@@ -1,75 +1,64 @@
 package com.example.practice;
 
-
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Date implements Serializable {
-    private int day;
-    private int month;
-    private int year;
+    private LocalDate date;
 
     public Date(int day, int month, int year) {
-        this.day = day;
-        this.month = month;
-        this.year = year;
+        this.date = LocalDate.of(year, month, day);
+    }
+
+    public Date(LocalDate date) {
+        this.date = date;
     }
 
     // Converts the Date object to a string in the format "dd/MM/yyyy"
     public String dateToString() {
-        return String.format("%02d/%02d/%04d", day, month, year);
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     // Parses a date string in the format "yyyy-MM-dd" and returns a Date object
     public static Date valueOf(String dateStr) {
-        String pattern = "(\\d{4})-(\\d{2})-(\\d{2})";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(dateStr);
-        if (m.matches()) {
-            int year = Integer.parseInt(m.group(1));
-            int month = Integer.parseInt(m.group(2));
-            int day = Integer.parseInt(m.group(3));
-            return new Date(day, month, year);
-        } else {
-            throw new IllegalArgumentException("Invalid date format. Expected yyyy-MM-dd.");
-        }
+        LocalDate localDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return new Date(localDate);
+    }
+
+    // Converts the Date object to LocalDate
+    public LocalDate toLocalDate() {
+        return this.date;
     }
 
     // Getters and setters for day, month, and year
     public int getDay() {
-        return day;
+        return date.getDayOfMonth();
     }
 
     public void setDay(int day) {
-        this.day = day;
+        this.date = this.date.withDayOfMonth(day);
     }
 
     public int getMonth() {
-        return month;
+        return date.getMonthValue();
     }
 
     public void setMonth(int month) {
-        this.month = month;
+        this.date = this.date.withMonth(month);
     }
 
     public int getYear() {
-        return year;
+        return date.getYear();
     }
 
     public void setYear(int year) {
-        this.year = year;
+        this.date = this.date.withYear(year);
     }
 
     // Compares two Date objects
     public int compareTo(Date other) {
-        if (this.year != other.year) {
-            return this.year - other.year;
-        } else if (this.month != other.month) {
-            return this.month - other.month;
-        } else {
-            return this.day - other.day;
-        }
+        return this.date.compareTo(other.toLocalDate());
     }
 
     @Override

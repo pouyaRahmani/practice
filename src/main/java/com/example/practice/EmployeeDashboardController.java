@@ -57,10 +57,10 @@ public class EmployeeDashboardController {
                     searchUserBySalaryType();
                     break;
                 case 5:
-                    Employee.showAllEmployees();
+                    Employee.showAllEmployees(FILENAME);
                     break;
                 case 6:
-                    Employee.showAllManagers();
+                    Employee.showAllManagers(FILENAME);
                     break;
                 case 7:
                     Employee.updateProfile(FILENAME);

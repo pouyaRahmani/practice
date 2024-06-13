@@ -7,14 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,10 +33,10 @@ public class SignUpController {
     private TextField usernameTextField;
 
     @FXML
-    private TextField passwordTextField;
+    private PasswordField passwordTextField;
 
     @FXML
-    private TextField confirmPasswordTextField;
+    private PasswordField confirmPasswordTextField;
 
     @FXML
     private TextField departmentIdTextField;
@@ -109,83 +106,54 @@ public class SignUpController {
     }
 
     @FXML
-    public void switchToLogin(ActionEvent event) {
+    private void onSignUpButtonClick() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // نمایش پیام خطا
-            System.out.println("Failed to load login FXML file.");
-        }
-    }
+            System.out.println("SignUp button clicked");
 
-    @FXML
-    public void onSignUpButtonClick(ActionEvent actionEvent) {
-        if (validateInput()) {
-            Employee newEmployee = createEmployeeFromInput();
-            if (saveEmployeeToFile(newEmployee, "Employees.dat")) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Employee registered successfully.");
-                switchToLogin(actionEvent);
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Failed to save employee. Please try again.");
+            String firstName = firstNameTextField.getText().trim();
+            String lastName = lastNameTextField.getText().trim();
+            String ssn = ssnTextField.getText().trim();
+            LocalDate birthDate = birthDatePicker.getValue();
+            String username = usernameTextField.getText().trim();
+            String password = passwordTextField.getText();
+            String confirmPassword = confirmPasswordTextField.getText();
+            int departmentId = Integer.parseInt(departmentIdTextField.getText().trim());
+            boolean isManager = managerComboBox.getValue();
+            String salaryType = salaryTypeComboBox.getValue();
+            boolean isActive = activeSalaryComboBox.getValue();
+            String employeeId = employeeIdTextField.getText().trim();
+            LocalDate salaryStartDate = salaryStartDatePicker.getValue();
+            LocalDate salaryEndDate = salaryEndDatePicker.getValue();
+
+            if (firstName.isEmpty() || lastName.isEmpty() || ssn.isEmpty() || username.isEmpty() ||
+                    password.isEmpty() || confirmPassword.isEmpty() || salaryType == null ||
+                    birthDate == null || salaryStartDate == null || salaryEndDate == null) {
+                throw new IllegalArgumentException("All fields must be filled out.");
             }
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Invalid input. Please check your input and try again.");
-        }
-    }
 
-    private boolean validateInput() {
-        if (usernameTextField.getText().isEmpty() ||
-                passwordTextField.getText().isEmpty() ||
-                !passwordTextField.getText().equals(confirmPasswordTextField.getText())) {
-            return false;
-        }
-        return true;
-    }
+            if (!password.equals(confirmPassword)) {
+                throw new IllegalArgumentException("Passwords do not match.");
+            }
 
-    private Employee createEmployeeFromInput() {
-        String firstName = firstNameTextField.getText();
-        String lastName = lastNameTextField.getText();
-        String ssn = ssnTextField.getText();
-        Date birthDate = Date.valueOf(birthDatePicker.getValue());
-        String username = usernameTextField.getText();
-        String password = passwordTextField.getText();
-        int departmentId = Integer.parseInt(departmentIdTextField.getText());
-        boolean isManager = managerComboBox.getValue();
-        String salaryType = salaryTypeComboBox.getValue();
-        double salary1 = Double.parseDouble(salaryField1.getText());
-        double salary2 = salaryField2.isVisible() ? Double.parseDouble(salaryField2.getText()) : 0.0;
-        double salary3 = salaryField3.isVisible() ? Double.parseDouble(salaryField3.getText()) : 0.0;
-        String employeeId = employeeIdTextField.getText();
-        Date salaryStartDate = Date.valueOf(salaryStartDatePicker.getValue());
-        Date salaryEndDate = salaryEndDatePicker.getValue() != null ? Date.valueOf(salaryEndDatePicker.getValue()) : null;
-        boolean isActive = activeSalaryComboBox.getValue();
+            double salary1 = Double.parseDouble(salaryField1.getText().trim());
+            double salary2 = salaryField2.isVisible() ? Double.parseDouble(salaryField2.getText().trim()) : 0;
+            double salary3 = salaryField3.isVisible() ? Double.parseDouble(salaryField3.getText().trim()) : 0;
 
-        return new Employee(firstName, lastName, ssn, birthDate, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDate, salaryEndDate, isActive);
-    }
+            java.util.Date birthDateConverted = java.sql.Date.valueOf(birthDate);
+            java.util.Date salaryStartDateConverted = java.sql.Date.valueOf(salaryStartDate);
+            java.util.Date salaryEndDateConverted = java.sql.Date.valueOf(salaryEndDate);
 
-    private boolean saveEmployeeToFile(Employee employee, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
+            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive);
 
-        if (employees == null) {
-            employees = new HashSet<>();
-        }
+            saveEmployeeToFile(employee);
 
-        employees.add(employee);
-
-        try (FileOutputStream fos = new FileOutputStream(filename);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(employees);
-            return true;
-        } catch (IOException e) {
+            System.out.println("Employee created successfully: " + employee);
+        } catch (Exception e) {
+            System.err.println("Error creating employee: " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
     }
+
 
     private static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = null;
@@ -198,40 +166,43 @@ public class SignUpController {
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("File does not exist: " + filename);
         }
 
-        return employees;
+        return employees != null ? employees : new HashSet<>();
     }
 
+    private void saveEmployeeToFile(Employee employee) {
+        System.out.println("Saving employee to file...");
+        Set<Employee> employees = readEmployeesFromFile("Employees.ser");
+
+        employees.add(employee);
+        System.out.println("Employee added to set: " + employee);
+
+        try (FileOutputStream fileOut = new FileOutputStream("Employees.ser");
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(employees);
+            System.out.println("Employee data is saved in Employees.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
 
 
     @FXML
-    private void clearFields() {
-        // Clear text fields
-        firstNameTextField.clear();
-        lastNameTextField.clear();
-        ssnTextField.clear();
-        usernameTextField.clear();
-        passwordTextField.clear();
-        confirmPasswordTextField.clear();
-        departmentIdTextField.clear();
-        salaryField1.clear();
-        salaryField2.clear();
-        salaryField3.clear();
-        employeeIdTextField.clear();
-
-        // Clear date pickers
-        birthDatePicker.setValue(null);
-        salaryStartDatePicker.setValue(null);
-        salaryEndDatePicker.setValue(null);
-
-        // Clear combo boxes
-        managerComboBox.setValue(null);
-        salaryTypeComboBox.setValue(null);
-        activeSalaryComboBox.setValue(null);
+    private void switchToLogin(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load login FXML file.");
+        }
     }
-
-
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);

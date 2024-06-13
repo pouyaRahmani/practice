@@ -1,8 +1,6 @@
 package com.example.practice;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +27,10 @@ public class Employee implements Serializable {
     private Activity status;
     private ArrayList<Salary> salaries;
 
+    private static final String FILENAME = "Employees.ser";
+
+
+    // Additional constructor that uses java.util.Date for birthDate
     public Employee(String firstName, String lastName, String socialSecurityNumber, Date birthDate, String userName,
                     String password, int id, int departmentId, boolean isManager, boolean isArchived, Activity status) {
         this.firstName = firstName;
@@ -42,10 +44,39 @@ public class Employee implements Serializable {
         this.isManager = isManager;
         this.isArchived = isArchived;
         this.status = status;
-        this.salaries = new ArrayList<>();
+        this.salaries = new ArrayList<>(); // Initialize salaries
     }
 
-    public Employee(String firstName, String lastName, String ssn, Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, String employeeId, Date salaryStartDate, Date salaryEndDate, boolean isActive) {
+    // Additional constructor that uses java.util.Date for birthDate
+    public Employee(String firstName, String lastName, String ssn, java.util.Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, String employeeId, java.util.Date salaryStartDate, java.util.Date salaryEndDate, boolean isActive) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.socialSecurityNumber = ssn;
+        this.birthDate = new Date(birthDate.getDate(), birthDate.getMonth() + 1, birthDate.getYear() + 1900); // Convert java.util.Date to custom Date
+        this.userName = username;
+        this.password = password;
+        this.departmentId = departmentId;
+        this.isManager = isManager;
+        this.salaries = new ArrayList<>();
+
+        // Initialize salaries based on salaryType
+        Date startDate = new Date(salaryStartDate.getDate(), salaryStartDate.getMonth() + 1, salaryStartDate.getYear() + 1900);
+        Date endDate = new Date(salaryEndDate.getDate(), salaryEndDate.getMonth() + 1, salaryEndDate.getYear() + 1900);
+
+        switch (salaryType) {
+            case "Fixed":
+                this.salaries.add(new Fixed(startDate, endDate, isActive, this, salary1));
+                break;
+            case "Hourly":
+                this.salaries.add(new HourlyWage(startDate, endDate, isActive, this, salary1, salary2));
+                break;
+            case "Commission":
+                this.salaries.add(new Commission(startDate, endDate, isActive, this, salary2, salary1));
+                break;
+            case "Base Plus Commission":
+                this.salaries.add(new BasePlusCommission(startDate, endDate, isActive, this, salary1, salary3, salary2));
+                break;
+        }
     }
 
     public void addSalary(Salary salary) {
@@ -109,7 +140,7 @@ public class Employee implements Serializable {
     }
 
     public static ArrayList<Employee> searchBySalaryType(Class<? extends Salary> salaryType, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         ArrayList<Employee> result = new ArrayList<>();
         for (Employee employee : employees) {
             for (Salary salary : employee.getPaymentHistory()) {
@@ -122,8 +153,8 @@ public class Employee implements Serializable {
         return result;
     }
 
-    public static List<Employee> showAllEmployees() {
-        Set<Employee> employees = readEmployeesFromFile("Employees.dat");
+    public static List<Employee> showAllEmployees(String filename) {
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         List<Employee> employeeList = new ArrayList<>();
         for (Employee employee : employees) {
             if (!employee.isManager) {
@@ -137,8 +168,8 @@ public class Employee implements Serializable {
         return employeeList;
     }
 
-    public static List<Employee> showAllManagers() {
-        Set<Employee> employees = readEmployeesFromFile("Employees.dat");
+    public static List<Employee> showAllManagers(String filename) {
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         List<Employee> managerList = new ArrayList<>();
         for (Employee employee : employees) {
             if (employee.isManager) {
@@ -153,7 +184,7 @@ public class Employee implements Serializable {
     }
 
     public static void archiveEmployee(int id, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         Scanner scanner = new Scanner(System.in);
 
         for (Employee employee : employees) {
@@ -194,7 +225,7 @@ public class Employee implements Serializable {
     }
 
     public static void changeSalary(int id, Salary newSalary, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         for (Employee employee : employees) {
             if (employee.getId() == id) {
                 for (Salary salary : employee.getPaymentHistory()) {
@@ -208,9 +239,9 @@ public class Employee implements Serializable {
         }
     }
 
-    private static Set<Employee> readEmployeesFromFile(String filename) {
+    public static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = new HashSet<>();
-        File file = new File(filename);
+        File file = new File(FILENAME);
         if (file.exists()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
                 employees = (Set<Employee>) ois.readObject();
@@ -222,7 +253,7 @@ public class Employee implements Serializable {
     }
 
     private static void writeEmployeesToFile(Set<Employee> employees, String filename) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
             oos.writeObject(employees);
         } catch (IOException e) {
             e.printStackTrace();
@@ -231,7 +262,7 @@ public class Employee implements Serializable {
 
     public static void updateProfile(String filename) {
         Scanner scanner = new Scanner(System.in);
-        Set<Employee> employees = readEmployeesFromFile(filename);
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         Employee employeeToUpdate = null;
 
         System.out.print("Enter employee ID: ");
@@ -323,6 +354,8 @@ public class Employee implements Serializable {
                 "\nsalaries=" + salaries +
                 "\t\tBirthday=" + birthDate +
                 "\t\tSSN='" + socialSecurityNumber + '\'' +
+                "\t\tisArchived=" + isArchived +
+                "password='" + password + '\'' +
                 (activeSalary != null ? "\nActive Salary=" + activeSalary : "") +
                 '}';
     }

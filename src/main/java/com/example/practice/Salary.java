@@ -1,7 +1,6 @@
 package com.example.practice;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public abstract class Salary implements Serializable {
     protected Date startDate;

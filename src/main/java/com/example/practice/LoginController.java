@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.HashSet;
 import java.util.Set;
 
 public class LoginController {
@@ -25,6 +24,7 @@ public class LoginController {
 
     @FXML
     private PasswordField passwordTextField; // Changed to PasswordField for better security
+    private static final String FILENAME = "Employees.ser";
 
     @FXML
     public void switchToSignUp(ActionEvent event) {
@@ -40,28 +40,28 @@ public class LoginController {
         }
     }
 
+
     @FXML
     public void onSignInButtonClick(ActionEvent actionEvent) {
         String username = userNameTextField.getText();
         String password = passwordTextField.getText();
 
         if (validateLogin(username, password)) {
-            Employee employee = authenticateEmployee(username, password, "Employees.dat");
+            Employee employee = authenticateEmployee(username, password, FILENAME);
 
             if (employee != null) {
                 try {
                     FXMLLoader loader;
+                    Parent dashboard;
                     if (employee.isManager()) {
                         loader = new FXMLLoader(getClass().getResource("manager_dashboard.fxml"));
-                        ManagerDashboardController controller = new ManagerDashboardController(employee);
-                        loader.setController(controller);
+                        loader.setControllerFactory(param -> new ManagerDashboardController(employee));
                     } else {
                         loader = new FXMLLoader(getClass().getResource("employee_dashboard.fxml"));
-                        EmployeeDashboardController controller = new EmployeeDashboardController(employee);
-                        loader.setController(controller);
+                        loader.setControllerFactory(param -> new EmployeeDashboardController(employee));
                     }
 
-                    Parent dashboard = loader.load();
+                    dashboard = loader.load();
                     Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                     stage.setScene(new Scene(dashboard));
                     stage.setTitle("Dashboard");
@@ -78,8 +78,9 @@ public class LoginController {
         }
     }
 
+
     private boolean validateLogin(String username, String password) {
-        Set<Employee> employees = readEmployeesFromFile("Employees.dat");
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
         if (employees == null) {
             showAlert(Alert.AlertType.ERROR, "Error", "Could not read employees from file.");
             return false;
@@ -103,12 +104,9 @@ public class LoginController {
         return false;
     }
 
-
-
-
     private static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = null;
-        File file = new File(filename);
+        File file = new File(FILENAME);
 
         if (file.exists()) {
             try (FileInputStream fis = new FileInputStream(filename);
@@ -122,9 +120,8 @@ public class LoginController {
         return employees;
     }
 
-
     private Employee authenticateEmployee(String username, String password, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
+        Set<Employee> employees = readEmployeesFromFile(FILENAME);
 
         for (Employee employee : employees) {
             if (employee != null && employee.getUserName() != null && employee.getPassword() != null) {
@@ -135,7 +132,6 @@ public class LoginController {
         }
         return null;
     }
-
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
