@@ -1,5 +1,7 @@
 package com.example.practice;
 
+import javafx.scene.control.TextArea;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,13 +28,19 @@ public class Employee implements Serializable {
     private boolean isArchived;
     private Activity status;
     private ArrayList<Salary> salaries;
+    private ArrayList<Integer> departmentHistory; // Attribute to store department history
+    private double managerBaseSalary;
+    private Activity inactiveReason;
+
 
     private static final String FILENAME = "Employees.ser";
+    public Employee() {
+        this.departmentHistory = new ArrayList<>();
+        this.salaries = new ArrayList<>();
+    }
 
-
-    // Additional constructor that uses java.util.Date for birthDate
     public Employee(String firstName, String lastName, String socialSecurityNumber, Date birthDate, String userName,
-                    String password, int id, int departmentId, boolean isManager, boolean isArchived, Activity status) {
+                    String password, int id, int departmentId, boolean isManager, boolean isArchived, Activity status, double managerBaseSalary) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.socialSecurityNumber = socialSecurityNumber;
@@ -44,11 +52,13 @@ public class Employee implements Serializable {
         this.isManager = isManager;
         this.isArchived = isArchived;
         this.status = status;
-        this.salaries = new ArrayList<>(); // Initialize salaries
+        this.salaries = new ArrayList<>();
+        this.departmentHistory = new ArrayList<>(); // Initialize the departmentHistory list
+        this.managerBaseSalary = managerBaseSalary;
     }
 
     // Additional constructor that uses java.util.Date for birthDate
-    public Employee(String firstName, String lastName, String ssn, java.util.Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, String employeeId, java.util.Date salaryStartDate, java.util.Date salaryEndDate, boolean isActive) {
+    public Employee(String firstName, String lastName, String ssn, java.util.Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, int employeeId, java.util.Date salaryStartDate, java.util.Date salaryEndDate, boolean isActive,Activity inactiveReason) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.socialSecurityNumber = ssn;
@@ -57,7 +67,10 @@ public class Employee implements Serializable {
         this.password = password;
         this.departmentId = departmentId;
         this.isManager = isManager;
+        this.id=employeeId;
         this.salaries = new ArrayList<>();
+        this.isArchived = isActive;
+        this.inactiveReason = inactiveReason;
 
         // Initialize salaries based on salaryType
         Date startDate = new Date(salaryStartDate.getDate(), salaryStartDate.getMonth() + 1, salaryStartDate.getYear() + 1900);
@@ -78,6 +91,7 @@ public class Employee implements Serializable {
                 break;
         }
     }
+    
 
     public void addSalary(Salary salary) {
         salaries.add(salary);
@@ -86,6 +100,30 @@ public class Employee implements Serializable {
     public ArrayList<Salary> getPaymentHistory() {
         return salaries;
     }
+
+    // Method to show payment history
+    public static void showPaymentHistory(String filename, TextArea resultTextArea) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter employee ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+
+        Set<Employee> employees = readEmployeesFromFile(filename);
+        for (Employee employee : employees) {
+            if (employee.getId() == id) {
+                System.out.println("Payment History for Employee ID " + id + ":");
+                for (Salary salary : employee.getPaymentHistory()) {
+                    System.out.println(salary);
+                    if (salary.activeSalary) {
+                        System.out.println("(Active Salary)");
+                    }
+                }
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
 
     public static double calculateEarnings(int id, String filename) {
         Set<Employee> employees = readEmployeesFromFile(filename);
@@ -100,7 +138,6 @@ public class Employee implements Serializable {
         }
         return 0;
     }
-
     public int getId() {
         return id;
     }
@@ -128,6 +165,47 @@ public class Employee implements Serializable {
     public Activity getStatus() {
         return status;
     }
+
+    public double getManagerBaseSalary() {
+        return managerBaseSalary;
+    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+        this.socialSecurityNumber = socialSecurityNumber;
+    }
+
+    public boolean isActive() {
+        return isArchived;
+    }
+
+    public Activity getInactiveReason() {
+        return inactiveReason;
+    }
+
+    public void setInactiveReason(Activity inactiveReason) {
+        this.inactiveReason = inactiveReason;
+    }
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public ArrayList<Integer> getDepartmentHistory() {
+        return departmentHistory;
+    }
+
+    public void addDepartmentHistory(int departmentId) {
+        departmentHistory.add(departmentId);
+    }
+
+
 
     public static Employee findById(int id, String filename) {
         Set<Employee> employees = readEmployeesFromFile(filename);
@@ -239,9 +317,37 @@ public class Employee implements Serializable {
         }
     }
 
+    // Method to calculate total earnings of a department
+    public static double calculateDepartmentEarnings(int departmentId, String filename) {
+        Set<Employee> employees = readEmployeesFromFile(filename);
+        double totalEarnings = 0;
+        for (Employee employee : employees) {
+            if (employee.getDepartmentId() == departmentId) {
+                for (Salary salary : employee.getPaymentHistory()) {
+                    totalEarnings += salary.getAmount();
+                }
+            }
+        }
+        return totalEarnings;
+    }
+
+
+    // Method to calculate total earnings of all employees
+    public static double calculateAllEmployeesEarnings(String filename) {
+        Set<Employee> employees = readEmployeesFromFile(filename);
+        double totalEarnings = 0;
+        for (Employee employee : employees) {
+            for (Salary salary : employee.getPaymentHistory()) {
+                totalEarnings += salary.getAmount();
+            }
+        }
+        return totalEarnings;
+    }
+
+
     public static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = new HashSet<>();
-        File file = new File(FILENAME);
+        File file = new File(filename);
         if (file.exists()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
                 employees = (Set<Employee>) ois.readObject();
@@ -252,17 +358,18 @@ public class Employee implements Serializable {
         return employees;
     }
 
-    private static void writeEmployeesToFile(Set<Employee> employees, String filename) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
+    static void writeEmployeesToFile(Set<Employee> employees, String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(employees);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Update profile for employees and managers based on Id and filename
     public static void updateProfile(String filename) {
         Scanner scanner = new Scanner(System.in);
-        Set<Employee> employees = readEmployeesFromFile(FILENAME);
+        Set<Employee> employees = readEmployeesFromFile(filename);
         Employee employeeToUpdate = null;
 
         System.out.print("Enter employee ID: ");
@@ -333,6 +440,7 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
+
         // Find the active salary for the employee
         Salary activeSalary = null;
         for (Salary salary : salaries) {
@@ -344,19 +452,20 @@ public class Employee implements Serializable {
 
         // Return the employee details as a string with the active salary
         return "Employee{" +
-                "FirstName='" + firstName + '\'' +
-                "\t\tLastName='" + lastName + '\'' +
-                "\t\tUserName='" + userName + '\'' +
+                "FirstName='" + firstName +
+                "\t\tLastName='" + lastName +
+                "\t\tUserName='" + userName +
                 "\t\tId=" + id +
                 "\t\tDepartmentId=" + departmentId +
                 "\t\tisManager=" + isManager +
                 "\t\tStatus=" + status +
+                "\t\t Archived=" + isArchived +
+                (isManager ? "\t\tManager Base Salary=" + managerBaseSalary : "") +
                 "\nsalaries=" + salaries +
                 "\t\tBirthday=" + birthDate +
                 "\t\tSSN='" + socialSecurityNumber + '\'' +
-                "\t\tisArchived=" + isArchived +
-                "password='" + password + '\'' +
                 (activeSalary != null ? "\nActive Salary=" + activeSalary : "") +
-                '}';
+                "\nDepartment History=" + departmentHistory +
+                "}\n";
     }
 }

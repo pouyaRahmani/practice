@@ -48,6 +48,9 @@
             <Label text="Department ID:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
             <TextField fx:id="departmentIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
+            <Label text="Manager Base Salary:" GridPane.columnIndex="0" GridPane.rowIndex="18" />
+            <TextField fx:id="managerBaseSalaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+
             <Label text="Is Manager:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
             <ComboBox fx:id="managerComboBox" GridPane.columnIndex="1" GridPane.rowIndex="8">
                 <items>
@@ -98,34 +101,46 @@
                 </items>
             </ComboBox>
 
-            <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="17">
-                <Button onAction="#switchToLogin" text="Sign Up" />
+            <Label text="Inactive Reason:" GridPane.columnIndex="0" GridPane.rowIndex="17" />
+            <ComboBox fx:id="inactiveReasonComboBox" GridPane.columnIndex="1" GridPane.rowIndex="17" disable="true">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="NO_PAYOFF" />
+                        <String fx:value="FIRED" />
+                        <String fx:value="STOPPED_COOPERATING" />
+                        <String fx:value="RETIREMENT" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="19">
+                <Button onAction="#onSignUpButtonClick" text="Sign Up" />
                 <Button onAction="#switchToLogin" text="Back to Login" />
             </HBox>
-         <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints />
+                <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
         </GridPane>
     </children>
 </VBox>

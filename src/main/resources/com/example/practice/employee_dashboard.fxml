@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.practice.EmployeeDashboardController">
-
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <Button text="View Total Earnings" onAction="#calculateEarnings"/>
-            <Button text="View Payment History" onAction="#handleViewSalaryButtonAction"/>
-            <Button text="Search User by ID" onAction="#searchUserById"/>
-            <Button text="Search User by Salary Type" onAction="#searchUserBySalaryType"/>
-            <Button text="Show All Employees" onAction="#showAllEmployees"/>
-            <Button text="Show All Managers" onAction="#showAllManagers"/>
-            <Button text="Update Profile" onAction="#updateProfile"/>
-            <Button text="Log Out" onAction="#handleLogoutButtonAction"/>
-        </VBox>
-    </center>
-
-</BorderPane>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.practice.EmployeeDashboardController">
+    <children>
+        <Label text="Employee Dashboard" style="-fx-font-size: 24px;"/>
+        <GridPane hgap="10" vgap="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="View total earnings by ID" onAction="#handleViewEarningsById" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <Button text="View payment history" onAction="#handleViewPaymentHistory" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Button text="Search user by ID" onAction="#handleSearchUserById" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <Button text="Search user by Salary Type" onAction="#handleSearchUserBySalaryType" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <Button text="Show all employees" onAction="#handleShowAllEmployees" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <Button text="Show all managers" onAction="#handleShowAllManagers" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <Button text="Update profile" onAction="#handleUpdateProfile" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <Button text="View department earnings" onAction="#handleViewDepartmentEarnings" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <Button text="View all employees' earnings" onAction="#handleViewAllEmployeesEarnings" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+            <Button text="Log out" onAction="#handleLogout" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+        </GridPane>
+        <Label text="Result:" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <TextArea fx:id="resultTextArea" editable="false" wrapText="true" prefHeight="600.0" prefWidth="500.0"/>
+    </children>
+</VBox>

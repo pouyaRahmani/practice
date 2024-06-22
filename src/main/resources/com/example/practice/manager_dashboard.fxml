@@ -1,24 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.practice.EmployeeDashboardController">
-
-    <center>
-        <VBox spacing="10" alignment="CENTER">
-            <Button text="View Total Earnings" onAction="#calculateEarnings"/>
-            <Button text="View Payment History" onAction="#handleViewSalaryButtonAction"/>
-            <Button text="Search User by ID" onAction="#searchUserById"/>
-            <Button text="Search User by Salary Type" onAction="#searchUserBySalaryType"/>
-            <Button text="Show All Employees" onAction="#showAllEmployees"/>
-            <Button text="Show All Managers" onAction="#showAllManagers"/>
-            <Button text="Update Profile" onAction="#updateProfile"/>
-            <Button text="Log Out" onAction="#handleLogoutButtonAction"/>
-        </VBox>
-    </center>
-
-</BorderPane>
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practice.ManagerDashboardController">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <MenuItem text="Logout" onAction="#handleLogout"/>
+                </Menu>
+                <Menu text="Employees">
+                    <MenuItem text="View All Employees" onAction="#handleShowAllEmployees"/>
+                    <MenuItem text="View All Managers" onAction="#handleShowAllManagers"/>
+                    <MenuItem text="Generate Random Employee" onAction="#handleGenerateRandomEmployee"/>
+                    <MenuItem text="Add Department" onAction="#handleAddDepartment"/>
+                    <MenuItem text="Count Employees in Department" onAction="#handleCountEmployeesInDepartment"/>
+                    <MenuItem text="Change Employee Department" onAction="#handleChangeEmployeeDepartment"/>
+                </Menu>
+                <Menu text="Salary">
+                    <MenuItem text="Change Salary" onAction="#handleChangeSalary"/>
+                </Menu>
+                <Menu text="Statistics">
+                    <MenuItem text="View Earnings by ID" onAction="#handleViewEarningsById"/>
+                    <MenuItem text="View Payment History" onAction="#handleViewPaymentHistory"/>
+                    <MenuItem text="View Department Earnings" onAction="#handleViewDepartmentEarnings"/>
+                    <MenuItem text="View All Employees Earnings" onAction="#handleViewAllEmployeesEarnings"/>
+                </Menu>
+                <Menu text="Profile">
+                    <MenuItem text="Search User by ID" onAction="#handleSearchUserById"/>
+                    <MenuItem text="Search User by Salary Type" onAction="#handleSearchUserBySalaryType"/>
+                    <MenuItem text="Update Profile" onAction="#handleUpdateProfile"/>
+                    <MenuItem text="Archive User" onAction="#handleArchiveUser"/>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <SplitPane dividerPositions="0.3">
+            <items>
+                <VBox>
+                    <Label text="Manager Dashboard" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <Button text="View All Employees" onAction="#handleShowAllEmployees"/>
+                    <Button text="View All Managers" onAction="#handleShowAllManagers"/>
+                    <Button text="Generate Random Employee" onAction="#handleGenerateRandomEmployee"/>
+                    <Button text="Add Department" onAction="#handleAddDepartment"/>
+                    <Button text="Count Employees in Department" onAction="#handleCountEmployeesInDepartment"/>
+                    <Button text="Change Employee Department" onAction="#handleChangeEmployeeDepartment"/>
+                    <Button text="View Earnings by ID" onAction="#handleViewEarningsById"/>
+                    <Button text="View Payment History" onAction="#handleViewPaymentHistory"/>
+                    <Button text="View Department Earnings" onAction="#handleViewDepartmentEarnings"/>
+                    <Button text="View All Employees Earnings" onAction="#handleViewAllEmployeesEarnings"/>
+                    <Button text="Search User by ID" onAction="#handleSearchUserById"/>
+                    <Button text="Search User by Salary Type" onAction="#handleSearchUserBySalaryType"/>
+                    <Button text="Update Profile" onAction="#handleUpdateProfile"/>
+                    <Button text="Archive User" onAction="#handleArchiveUser"/>
+                    <Button text="Change Salary" onAction="#handleChangeSalary"/>
+                </VBox>
+                <VBox>
+                    <Label text="Result:" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <TextArea fx:id="resultTextArea" editable="false" wrapText="true" prefHeight="600.0" prefWidth="500.0"/>
+                </VBox>
+            </items>
+        </SplitPane>
+    </children>
+</AnchorPane>

@@ -1,164 +1,272 @@
 package com.example.practice;
 
-
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Optional;
+import java.util.Set;
 
 public class EmployeeDashboardController {
 
+    @FXML
+    private TextArea resultTextArea;
+
     private Employee employee;
-    private static final String FILENAME = "Employees.dat";
+    private static final String FILENAME = "Employees.ser";
 
     public EmployeeDashboardController(Employee employee) {
         this.employee = employee;
     }
 
-    public void showMenu() {
-        Scanner scanner = new Scanner(System.in);
-        int choice;
+    @FXML
+    private void handleViewEarningsById(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID:");
+        if (id != -1) {
+            double earnings = Employee.calculateEarnings(id, FILENAME);
+            resultTextArea.appendText("Total earnings: " + earnings);
+        }
+    }
 
-        do {
-            System.out.println("\nEmployee Menu:");
-            System.out.println("1. View total earnings by ID");
-            System.out.println("2. View payment history");
-            System.out.println("3. Search user by ID");
-            System.out.println("4. Search user by Salary Type");
-            System.out.println("5. Show all employees");
-            System.out.println("6. Show all manager");
-            System.out.println("7. Update profile");
-            System.out.println("8. Log out");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+    @FXML
+    private void handleViewPaymentHistory(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter employee ID:");
+        if (id != -1) {
+            Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+            for (Employee employee : employees) {
+                if (employee.getId() == id) {
+                    resultTextArea.appendText("Payment History for Employee ID " + id + ":\n");
+                    for (Salary salary : employee.getPaymentHistory()) {
+                        resultTextArea.appendText(salary.toString() + "\n");
+                        if (salary.activeSalary) {
+                            resultTextArea.appendText("(Active Salary)\n");
+                        }
+                    }
+                    return;
+                }
+            }
+            resultTextArea.appendText("Employee not found.");
+        }
+    }
 
-            switch (choice) {
+
+    @FXML
+    private void handleSearchUserById(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID:");
+        if (id != -1) {
+            Employee foundEmployee = Employee.findById(id, FILENAME);
+            if (foundEmployee != null) {
+                resultTextArea.appendText("User found: " + foundEmployee);
+            } else {
+                resultTextArea.appendText("User not found.");
+            }
+        }
+    }
+
+    @FXML
+    private void handleSearchUserBySalaryType(ActionEvent event) {
+        resultTextArea.clear();
+        int salaryTypeChoice = getUserInputAsInt("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission):");
+        if (salaryTypeChoice != -1) {
+            Class<? extends Salary> salaryType = null;
+            switch (salaryTypeChoice) {
                 case 1:
-                    calculateEarnings();
+                    salaryType = Fixed.class;
                     break;
                 case 2:
-                    System.out.println("Payment history:");
-                    for (Salary salary : employee.getPaymentHistory()) {
-                        System.out.println(salary);
-                    }
+                    salaryType = HourlyWage.class;
                     break;
                 case 3:
-                    searchUserById();
+                    salaryType = Commission.class;
                     break;
                 case 4:
-                    searchUserBySalaryType();
-                    break;
-                case 5:
-                    Employee.showAllEmployees(FILENAME);
-                    break;
-                case 6:
-                    Employee.showAllManagers(FILENAME);
-                    break;
-                case 7:
-                    Employee.updateProfile(FILENAME);
-                    break;
-                case 8:
-                    System.out.println("Logging out...");
+                    salaryType = BasePlusCommission.class;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    resultTextArea.appendText("Invalid salary type. Please try again.");
+                    return;
             }
-        } while (choice != 8);
+
+            ArrayList<Employee> result = Employee.searchBySalaryType(salaryType, FILENAME);
+            if (result.isEmpty()) {
+                resultTextArea.appendText("No employees found with the specified salary type.");
+            } else {
+                resultTextArea.appendText("Employees with specified salary type:\n");
+                for (Employee e : result) {
+                    resultTextArea.appendText(e.toString() + "\n");
+                }
+            }
+        }
     }
 
-    @FXML
-    private void calculateEarnings() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID: ");
-        int id = scanner.nextInt();
-        double earnings = Employee.calculateEarnings(id, FILENAME);
-        System.out.println("Total earnings: " + earnings);
-    }
 
     @FXML
-    private void searchUserById() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID: ");
-        int id = scanner.nextInt();
-        Employee foundEmployee = Employee.findById(id, FILENAME);
-        if (foundEmployee != null) {
-            System.out.println("User found: " + foundEmployee);
-        } else {
-            System.out.println("User not found.");
+    private void handleShowAllEmployees(ActionEvent event) {
+        resultTextArea.clear();
+        Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+        resultTextArea.appendText("All employees:\n");
+        for (Employee employee : employees) {
+            resultTextArea.appendText(employee.toString() + "\n");
         }
     }
 
     @FXML
-    private void searchUserBySalaryType() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission): ");
-        int salaryTypeChoice = scanner.nextInt();
-        Class<? extends Salary> salaryType = null;
-        switch (salaryTypeChoice) {
-            case 1:
-                salaryType = Fixed.class;
-                break;
-            case 2:
-                salaryType = HourlyWage.class;
-                break;
-            case 3:
-                salaryType = Commission.class;
-                break;
-            case 4:
-                salaryType = BasePlusCommission.class;
-                break;
-            default:
-                System.out.println("Invalid salary type. Please try again.");
-                return;
-        }
-
-        ArrayList<Employee> result = Employee.searchBySalaryType(salaryType, FILENAME);
-        if (result.isEmpty()) {
-            System.out.println("No employees found with the specified salary type.");
-        } else {
-            System.out.println("Employees with specified salary type:");
-            for (Employee e : result) {
-                System.out.println(e);
+    private void handleShowAllManagers(ActionEvent event) {
+        resultTextArea.clear();
+        Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+        resultTextArea.appendText("All managers:\n");
+        for (Employee employee : employees) {
+            if (employee.isManager()) {
+                resultTextArea.appendText(employee.toString() + "\n");
             }
         }
     }
 
     @FXML
-    private void handleViewSalaryButtonAction() {
-        // منطق مشاهده حقوق
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Salary Information");
-        alert.setHeaderText(null);
-        alert.setContentText("Your salary details...");
-        alert.showAndWait();
+    private void handleUpdateProfile(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter employee ID:");
+        if (id != -1) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Input Required");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Enter username:");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                String username = result.get();
+                Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+                Employee employeeToUpdate = null;
+                for (Employee employee : employees) {
+                    if (employee.getId() == id && employee.getUserName().equals(username)) {
+                        employeeToUpdate = employee;
+                        break;
+                    }
+                }
+                if (employeeToUpdate == null) {
+                    resultTextArea.appendText("Employee with ID " + id + " and username " + username + " not found.");
+                    return;
+                }
+
+                resultTextArea.appendText("Current details of the employee:\n");
+                resultTextArea.appendText(employeeToUpdate.toString() + "\n");
+
+                TextInputDialog updateDialog = new TextInputDialog();
+                updateDialog.setTitle("Update Profile");
+                updateDialog.setHeaderText(null);
+                updateDialog.setContentText("Select field to update (1: First Name, 2: Last Name, 3: Social Security Number, 4: Birth Date):");
+                Optional<String> fieldChoice = updateDialog.showAndWait();
+                if (fieldChoice.isPresent()) {
+                    int choice = Integer.parseInt(fieldChoice.get());
+                    switch (choice) {
+                        case 1:
+                            updateDialog.setContentText("Enter new first name:");
+                            Optional<String> newFirstName = updateDialog.showAndWait();
+                            if (newFirstName.isPresent()) {
+                                employeeToUpdate.setFirstName(newFirstName.get());
+                            }
+                            break;
+                        case 2:
+                            updateDialog.setContentText("Enter new last name:");
+                            Optional<String> newLastName = updateDialog.showAndWait();
+                            if (newLastName.isPresent()) {
+                                employeeToUpdate.setLastName(newLastName.get());
+                            }
+                            break;
+                        case 3:
+                            updateDialog.setContentText("Enter new social security number:");
+                            Optional<String> newSSN = updateDialog.showAndWait();
+                            if (newSSN.isPresent()) {
+                                employeeToUpdate.setSocialSecurityNumber(newSSN.get());
+                            }
+                            break;
+                        case 4:
+                            updateDialog.setContentText("Enter new birth date (yyyy-MM-dd):");
+                            Optional<String> newBirthDateStr = updateDialog.showAndWait();
+                            if (newBirthDateStr.isPresent()) {
+                                Date newBirthDate = Date.valueOf(newBirthDateStr.get());
+                                employeeToUpdate.setBirthDate(newBirthDate);
+                            }
+                            break;
+                        default:
+                            resultTextArea.appendText("Invalid choice. Please try again.");
+                            return;
+                    }
+
+                    Employee.writeEmployeesToFile(employees, FILENAME);
+                    resultTextArea.appendText("Employee details updated successfully.");
+                }
+            }
+        }
+    }
+
+
+
+    @FXML
+    private void handleViewDepartmentEarnings(ActionEvent event) {
+        resultTextArea.clear();
+        int departmentId = getUserInputAsInt("Enter department ID:");
+        if (departmentId != -1) {
+            double departmentEarnings = Employee.calculateDepartmentEarnings(departmentId, FILENAME);
+            if (departmentEarnings == 0) {
+                resultTextArea.appendText("No earnings for the department.");
+            } else {
+                resultTextArea.appendText("Total department earnings: " + departmentEarnings);
+            }
+        }
     }
 
     @FXML
-    private void handleLogoutButtonAction(ActionEvent event) {
+    private void handleViewAllEmployeesEarnings(ActionEvent event) {
+        resultTextArea.clear();
+        double totalEarnings = Employee.calculateAllEmployeesEarnings(FILENAME);
+        resultTextArea.appendText("Total earnings of all employees: " + totalEarnings);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
         try {
-            Parent login = FXMLLoader.load(getClass().getResource("/login.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(login));
+            Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load login FXML file.");
         }
     }
 
-    public void showAllEmployees(ActionEvent event) {
+    private int getUserInputAsInt(String prompt) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Input Required");
+        dialog.setHeaderText(null);
+        dialog.setContentText(prompt);
+        Optional<String> result = dialog.showAndWait();
+        try {
+            return result.map(Integer::parseInt).orElse(-1);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number.");
+            return -1;
+        }
     }
 
-    public void showAllManagers(ActionEvent event) {
-    }
-
-    public void updateProfile(ActionEvent event) {
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

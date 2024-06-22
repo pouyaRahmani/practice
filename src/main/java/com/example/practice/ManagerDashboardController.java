@@ -1,248 +1,614 @@
 package com.example.practice;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.Stage;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Optional;
+import java.util.Set;
 
 public class ManagerDashboardController {
+
+    @FXML
+    private TextArea resultTextArea;
+
     private Employee employee;
-    private static final String FILENAME = "Employees.dat";
+    private static final String FILENAME = "Employees.ser";
 
     public ManagerDashboardController(Employee employee) {
         this.employee = employee;
     }
 
     @FXML
-    public void showMenu() {
-        Scanner scanner = new Scanner(System.in);
-        int choice;
+    private void handleViewEarningsById(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID:");
+        if (id != -1) {
+            double earnings = Employee.calculateEarnings(id, FILENAME);
+            resultTextArea.appendText("Total earnings: " + earnings);
+        }
+    }
 
-        do {
-            System.out.println("\nManager Menu:");
-            System.out.println("1. View total earnings by ID");
-            System.out.println("2. View payment history");
-            System.out.println("3. Search user by ID");
-            System.out.println("4. Search user by Salary Type");
-            System.out.println("5. Archive user");
-            System.out.println("6. Change salary");
-            System.out.println("7. Show all employees");
-            System.out.println("8. Show all managers");
-            System.out.println("9. Update profile");
-            System.out.println("10. Log out");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
+    @FXML
+    private void handleViewPaymentHistory(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter employee ID:");
+        if (id != -1) {
+            Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+            for (Employee employee : employees) {
+                if (employee.getId() == id) {
+                    resultTextArea.appendText("Payment History for Employee ID " + id + ":\n");
+                    for (Salary salary : employee.getPaymentHistory()) {
+                        resultTextArea.appendText(salary.toString() + "\n");
+                        if (salary.activeSalary) {
+                            resultTextArea.appendText("(Active Salary)\n");
+                        }
+                    }
+                    return;
+                }
+            }
+            resultTextArea.appendText("Employee not found.");
+        }
+    }
 
-            switch (choice) {
+
+    @FXML
+    private void handleSearchUserById(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID:");
+        if (id != -1) {
+            Employee foundEmployee = Employee.findById(id, FILENAME);
+            if (foundEmployee != null) {
+                resultTextArea.appendText("User found: " + foundEmployee);
+            } else {
+                resultTextArea.appendText("User not found.");
+            }
+        }
+    }
+
+    @FXML
+    private void handleSearchUserBySalaryType(ActionEvent event) {
+        resultTextArea.clear();
+        int salaryTypeChoice = getUserInputAsInt("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission):");
+        if (salaryTypeChoice != -1) {
+            Class<? extends Salary> salaryType = null;
+            switch (salaryTypeChoice) {
                 case 1:
-                    calculateEarnings();
+                    salaryType = Fixed.class;
                     break;
                 case 2:
-                    System.out.println("Payment history:");
-                    for (Salary salary : employee.getPaymentHistory()) {
-                        System.out.println(salary);
-                    }
+                    salaryType = HourlyWage.class;
                     break;
                 case 3:
-                    searchUserById();
+                    salaryType = Commission.class;
                     break;
                 case 4:
-                    searchUserBySalaryType();
-                    break;
-                case 5:
-                    archiveUser();
-                    break;
-                case 6:
-                    changeSalary();
-                    break;
-                case 7:
-                    Employee.showAllEmployees(FILENAME);
-                    break;
-                case 8:
-                    Employee.showAllManagers(FILENAME);
-                    break;
-                case 9:
-                    Employee.updateProfile(FILENAME);
-                    break;
-                case 10:
-                    System.out.println("Logging out...");
+                    salaryType = BasePlusCommission.class;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    resultTextArea.appendText("Invalid salary type. Please try again.");
+                    return;
             }
-        } while (choice != 10);
+
+            ArrayList<Employee> result = Employee.searchBySalaryType(salaryType, FILENAME);
+            if (result.isEmpty()) {
+                resultTextArea.appendText("No employees found with the specified salary type.");
+            } else {
+                resultTextArea.appendText("Employees with specified salary type:\n");
+                for (Employee e : result) {
+                    resultTextArea.appendText(e.toString() + "\n");
+                }
+            }
+        }
     }
 
-    @FXML
-    private void calculateEarnings() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID: ");
-        int id = scanner.nextInt();
-        double earnings = Employee.calculateEarnings(id, FILENAME);
-        System.out.println("Total earnings: " + earnings);
-    }
 
     @FXML
-    private void searchUserById() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID: ");
-        int id = scanner.nextInt();
-        Employee foundEmployee = Employee.findById(id, FILENAME);
-        if (foundEmployee != null) {
-            System.out.println("User found: " + foundEmployee);
-        } else {
-            System.out.println("User not found.");
+    private void handleShowAllEmployees(ActionEvent event) {
+        resultTextArea.clear();
+        Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+        resultTextArea.appendText("All employees:\n");
+        for (Employee employee : employees) {
+            resultTextArea.appendText(employee.toString() + "\n");
         }
     }
 
     @FXML
-    private void searchUserBySalaryType() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission): ");
-        int salaryTypeChoice = scanner.nextInt();
-        Class<? extends Salary> salaryType = null;
-        switch (salaryTypeChoice) {
-            case 1:
-                salaryType = Fixed.class;
-                break;
-            case 2:
-                salaryType = HourlyWage.class;
-                break;
-            case 3:
-                salaryType = Commission.class;
-                break;
-            case 4:
-                salaryType = BasePlusCommission.class;
-                break;
-            default:
-                System.out.println("Invalid salary type. Please try again.");
-                return;
-        }
-
-        ArrayList<Employee> result = Employee.searchBySalaryType(salaryType, FILENAME);
-        if (result.isEmpty()) {
-            System.out.println("No employees found with the specified salary type.");
-        } else {
-            System.out.println("Employees with specified salary type:");
-            for (Employee e : result) {
-                System.out.println(e);
+    private void handleShowAllManagers(ActionEvent event) {
+        resultTextArea.clear();
+        Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+        resultTextArea.appendText("All managers:\n");
+        for (Employee employee : employees) {
+            if (employee.isManager()) {
+                resultTextArea.appendText(employee.toString() + "\n");
             }
         }
     }
 
     @FXML
-    private void archiveUser() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID to archive: ");
-        int id = scanner.nextInt();
-        Employee.archiveEmployee(id, FILENAME);
+    private void handleUpdateProfile(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter employee ID:");
+        if (id != -1) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Input Required");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Enter username:");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                String username = result.get();
+                Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+                Employee employeeToUpdate = null;
+                for (Employee employee : employees) {
+                    if (employee.getId() == id && employee.getUserName().equals(username)) {
+                        employeeToUpdate = employee;
+                        break;
+                    }
+                }
+                if (employeeToUpdate == null) {
+                    resultTextArea.appendText("Employee with ID " + id + " and username " + username + " not found.");
+                    return;
+                }
+
+                resultTextArea.appendText("Current details of the employee:\n");
+                resultTextArea.appendText(employeeToUpdate.toString() + "\n");
+
+                TextInputDialog updateDialog = new TextInputDialog();
+                updateDialog.setTitle("Update Profile");
+                updateDialog.setHeaderText(null);
+                updateDialog.setContentText("Select field to update (1: First Name, 2: Last Name, 3: Social Security Number, 4: Birth Date):");
+                Optional<String> fieldChoice = updateDialog.showAndWait();
+                if (fieldChoice.isPresent()) {
+                    int choice = Integer.parseInt(fieldChoice.get());
+                    switch (choice) {
+                        case 1:
+                            updateDialog.setContentText("Enter new first name:");
+                            Optional<String> newFirstName = updateDialog.showAndWait();
+                            if (newFirstName.isPresent()) {
+                                employeeToUpdate.setFirstName(newFirstName.get());
+                            }
+                            break;
+                        case 2:
+                            updateDialog.setContentText("Enter new last name:");
+                            Optional<String> newLastName = updateDialog.showAndWait();
+                            if (newLastName.isPresent()) {
+                                employeeToUpdate.setLastName(newLastName.get());
+                            }
+                            break;
+                        case 3:
+                            updateDialog.setContentText("Enter new social security number:");
+                            Optional<String> newSSN = updateDialog.showAndWait();
+                            if (newSSN.isPresent()) {
+                                employeeToUpdate.setSocialSecurityNumber(newSSN.get());
+                            }
+                            break;
+                        case 4:
+                            updateDialog.setContentText("Enter new birth date (yyyy-MM-dd):");
+                            Optional<String> newBirthDateStr = updateDialog.showAndWait();
+                            if (newBirthDateStr.isPresent()) {
+                                Date newBirthDate = Date.valueOf(newBirthDateStr.get());
+                                employeeToUpdate.setBirthDate(newBirthDate);
+                            }
+                            break;
+                        default:
+                            resultTextArea.appendText("Invalid choice. Please try again.");
+                            return;
+                    }
+
+                    Employee.writeEmployeesToFile(employees, FILENAME);
+                    resultTextArea.appendText("Employee details updated successfully.");
+                }
+            }
+        }
     }
 
     @FXML
-    private void changeSalary() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter user ID: ");
-        int id = scanner.nextInt();
-        Employee foundEmployee = Employee.findById(id, FILENAME);
-        if (foundEmployee == null) {
-            System.out.println("User not found.");
-            return;
+    private void handleViewDepartmentEarnings(ActionEvent event) {
+        resultTextArea.clear();
+        int departmentId = getUserInputAsInt("Enter department ID:");
+        if (departmentId != -1) {
+            double departmentEarnings = Employee.calculateDepartmentEarnings(departmentId, FILENAME);
+            if (departmentEarnings == 0) {
+                resultTextArea.appendText("No earnings for the department.");
+            } else {
+                resultTextArea.appendText("Total department earnings: " + departmentEarnings);
+            }
         }
+    }
 
-        System.out.print("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission): ");
-        int salaryTypeChoice = scanner.nextInt();
-        Salary newSalary = null;
+    @FXML
+    private void handleViewAllEmployeesEarnings(ActionEvent event) {
+        resultTextArea.clear();
+        double totalEarnings = Employee.calculateAllEmployeesEarnings(FILENAME);
+        resultTextArea.appendText("Total earnings of all employees: " + totalEarnings);
+    }
 
-        System.out.print("Enter start date (yyyy-mm-dd): ");
-        String startDateStr = scanner.next();
-        Date startDate = Date.valueOf(startDateStr);
+    @FXML
+    private void handleArchiveUser(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID to archive:");
+        if (id != -1) {
+            Employee.archiveEmployee(id, FILENAME);
+            resultTextArea.appendText("User with ID " + id + " archived successfully.");
+        }
+    }
 
-        System.out.print("Enter end date (yyyy-mm-dd): ");
-        String endDateStr = scanner.next();
-        Date endDate = Date.valueOf(endDateStr);
 
-        System.out.print("Is the salary active (true/false)? ");
-        boolean activeSalary = scanner.nextBoolean();
 
-        switch (salaryTypeChoice) {
-            case 1:
-                System.out.print("Enter monthly salary: ");
-                double monthlySalary = scanner.nextDouble();
-                newSalary = new Fixed(startDate, endDate, activeSalary, foundEmployee, monthlySalary);
-                break;
-            case 2:
-                System.out.print("Enter hourly wage: ");
-                double hourlyWage = scanner.nextDouble();
-                System.out.print("Enter hours worked: ");
-                double hoursWorked = scanner.nextDouble();
-                newSalary = new HourlyWage(startDate, endDate, activeSalary, foundEmployee, hourlyWage, hoursWorked);
-                break;
-            case 3:
-                System.out.print("Enter gross sales: ");
-                double grossSales = scanner.nextDouble();
-                System.out.print("Enter commission rate: ");
-                double commissionRate = scanner.nextDouble();
-                newSalary = new Commission(startDate, endDate, activeSalary, foundEmployee, grossSales, commissionRate);
-                break;
-            case 4:
-                System.out.print("Enter base salary: ");
-                double baseSalary = scanner.nextDouble();
-                System.out.print("Enter gross sales: ");
-                grossSales = scanner.nextDouble();
-                System.out.print("Enter commission rate: ");
-                commissionRate = scanner.nextDouble();
-                newSalary = new BasePlusCommission(startDate, endDate, activeSalary, foundEmployee, baseSalary, grossSales, commissionRate);
-                break;
-            default:
-                System.out.println("Invalid salary type. Please try again.");
+    @FXML
+    private void handleChangeSalary(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter employee ID:");
+
+        if (id != -1) {
+            TextInputDialog salaryTypeDialog = new TextInputDialog();
+            salaryTypeDialog.setTitle("Change Salary");
+            salaryTypeDialog.setHeaderText(null);
+            salaryTypeDialog.setContentText("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission):");
+            Optional<String> salaryTypeResult = salaryTypeDialog.showAndWait();
+
+            if (salaryTypeResult.isPresent()) {
+                try {
+                    int salaryTypeChoice = Integer.parseInt(salaryTypeResult.get());
+                    Salary newSalary = null;
+
+                    TextInputDialog startDateDialog = new TextInputDialog();
+                    startDateDialog.setTitle("Change Salary");
+                    startDateDialog.setHeaderText(null);
+                    startDateDialog.setContentText("Enter start date (yyyy-mm-dd):");
+                    Optional<String> startDateResult = startDateDialog.showAndWait();
+
+                    if (startDateResult.isPresent()) {
+                        Date startDate = Date.valueOf(startDateResult.get());
+
+                        TextInputDialog endDateDialog = new TextInputDialog();
+                        endDateDialog.setTitle("Change Salary");
+                        endDateDialog.setHeaderText(null);
+                        endDateDialog.setContentText("Enter end date (yyyy-mm-dd):");
+                        Optional<String> endDateResult = endDateDialog.showAndWait();
+
+                        if (endDateResult.isPresent()) {
+                            Date endDate = Date.valueOf(endDateResult.get());
+
+                            switch (salaryTypeChoice) {
+                                case 1:
+                                    TextInputDialog monthlySalaryDialog = new TextInputDialog();
+                                    monthlySalaryDialog.setTitle("Change Salary");
+                                    monthlySalaryDialog.setHeaderText(null);
+                                    monthlySalaryDialog.setContentText("Enter monthly salary:");
+                                    Optional<String> monthlySalaryResult = monthlySalaryDialog.showAndWait();
+
+                                    if (monthlySalaryResult.isPresent()) {
+                                        try {
+                                            double monthlySalary = Double.parseDouble(monthlySalaryResult.get());
+                                            newSalary = new Fixed(startDate, endDate, true, Employee.findById(id, FILENAME), monthlySalary);
+                                            Employee.changeSalary(id, newSalary, FILENAME);
+                                            resultTextArea.appendText("Salary updated for user ID " + id + "\n");
+                                        } catch (NumberFormatException e) {
+                                            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for monthly salary.");
+                                        }
+                                    } else {
+                                        return; // User canceled monthly salary input
+                                    }
+                                    break;
+                                case 2:
+                                    TextInputDialog hourlyWageDialog = new TextInputDialog();
+                                    hourlyWageDialog.setTitle("Change Salary");
+                                    hourlyWageDialog.setHeaderText(null);
+                                    hourlyWageDialog.setContentText("Enter hourly wage:");
+                                    Optional<String> hourlyWageResult = hourlyWageDialog.showAndWait();
+
+                                    if (hourlyWageResult.isPresent()) {
+                                        try {
+                                            double hourlyWage = Double.parseDouble(hourlyWageResult.get());
+
+                                            TextInputDialog hoursWorkedDialog = new TextInputDialog();
+                                            hoursWorkedDialog.setTitle("Change Salary");
+                                            hoursWorkedDialog.setHeaderText(null);
+                                            hoursWorkedDialog.setContentText("Enter hours worked:");
+                                            Optional<String> hoursWorkedResult = hoursWorkedDialog.showAndWait();
+
+                                            if (hoursWorkedResult.isPresent()) {
+                                                try {
+                                                    double hoursWorked = Double.parseDouble(hoursWorkedResult.get());
+                                                    newSalary = new HourlyWage(startDate, endDate, true, Employee.findById(id, FILENAME), hourlyWage, hoursWorked);
+                                                    Employee.changeSalary(id, newSalary, FILENAME);
+                                                    resultTextArea.appendText("Salary updated for user ID " + id + "\n");
+                                                } catch (NumberFormatException e) {
+                                                    showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for hours worked.");
+                                                }
+                                            } else {
+                                                return; // User canceled hours worked input
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for hourly wage.");
+                                        }
+                                    } else {
+                                        return; // User canceled hourly wage input
+                                    }
+                                    break;
+                                case 3:
+                                    TextInputDialog grossSalesDialog = new TextInputDialog();
+                                    grossSalesDialog.setTitle("Change Salary");
+                                    grossSalesDialog.setHeaderText(null);
+                                    grossSalesDialog.setContentText("Enter gross sales:");
+                                    Optional<String> grossSalesResult = grossSalesDialog.showAndWait();
+
+                                    if (grossSalesResult.isPresent()) {
+                                        try {
+                                            double grossSales = Double.parseDouble(grossSalesResult.get());
+
+                                            TextInputDialog commissionRateDialog = new TextInputDialog();
+                                            commissionRateDialog.setTitle("Change Salary");
+                                            commissionRateDialog.setHeaderText(null);
+                                            commissionRateDialog.setContentText("Enter commission rate:");
+                                            Optional<String> commissionRateResult = commissionRateDialog.showAndWait();
+
+                                            if (commissionRateResult.isPresent()) {
+                                                try {
+                                                    double commissionRate = Double.parseDouble(commissionRateResult.get());
+                                                    newSalary = new Commission(startDate, endDate, true, Employee.findById(id, FILENAME), grossSales, commissionRate);
+                                                    Employee.changeSalary(id, newSalary, FILENAME);
+                                                    resultTextArea.appendText("Salary updated for user ID " + id + "\n");
+                                                } catch (NumberFormatException e) {
+                                                    showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for commission rate.");
+                                                }
+                                            } else {
+                                                return; // User canceled commission rate input
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for gross sales.");
+                                        }
+                                    } else {
+                                        return; // User canceled gross sales input
+                                    }
+                                    break;
+                                case 4:
+                                    TextInputDialog baseSalaryDialog = new TextInputDialog();
+                                    baseSalaryDialog.setTitle("Change Salary");
+                                    baseSalaryDialog.setHeaderText(null);
+                                    baseSalaryDialog.setContentText("Enter base salary:");
+                                    Optional<String> baseSalaryResult = baseSalaryDialog.showAndWait();
+
+                                    if (baseSalaryResult.isPresent()) {
+                                        try {
+                                            double baseSalary = Double.parseDouble(baseSalaryResult.get());
+
+                                            TextInputDialog grossSalesDialogBP = new TextInputDialog();
+                                            grossSalesDialogBP.setTitle("Change Salary");
+                                            grossSalesDialogBP.setHeaderText(null);
+                                            grossSalesDialogBP.setContentText("Enter gross sales:");
+                                            Optional<String> grossSalesResultBP = grossSalesDialogBP.showAndWait();
+
+                                            if (grossSalesResultBP.isPresent()) {
+                                                try {
+                                                    double grossSalesBP = Double.parseDouble(grossSalesResultBP.get());
+
+                                                    TextInputDialog commissionRateDialogBP = new TextInputDialog();
+                                                    commissionRateDialogBP.setTitle("Change Salary");
+                                                    commissionRateDialogBP.setHeaderText(null);
+                                                    commissionRateDialogBP.setContentText("Enter commission rate:");
+                                                    Optional<String> commissionRateResultBP = commissionRateDialogBP.showAndWait();
+
+                                                    if (commissionRateResultBP.isPresent()) {
+                                                        try {
+                                                            double commissionRateBP = Double.parseDouble(commissionRateResultBP.get());
+                                                            newSalary = new BasePlusCommission(startDate, endDate, true, Employee.findById(id, FILENAME), baseSalary, grossSalesBP, commissionRateBP);
+                                                            Employee.changeSalary(id, newSalary, FILENAME);
+                                                            resultTextArea.appendText("Salary updated for user ID " + id + "\n");
+                                                        } catch (NumberFormatException e) {
+                                                            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for commission rate.");
+                                                        }
+                                                    } else {
+                                                        return; // User canceled commission rate input
+                                                    }
+                                                } catch (NumberFormatException e) {
+                                                    showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for gross sales.");
+                                                }
+                                            } else {
+                                                return; // User canceled gross sales input
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for base salary.");
+                                        }
+                                    } else {
+                                        return; // User canceled base salary input
+                                    }
+                                    break;
+                                default:
+                                    showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid salary type (1 to 4).");
+                                    return;
+                            }
+                        } else {
+                            return; // User canceled end date input
+                        }
+                    } else {
+                        return; // User canceled start date input
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number for salary type.");
+                }
+            } else {
+                return; // User canceled salary type input
+            }
+        }
+    }
+    @FXML
+    private void handleGenerateRandomEmployee(ActionEvent event) {
+        resultTextArea.clear();
+        Employee newEmployee = RandomEmployee.employeeGenerator(FILENAME);
+        ArrayList<Salary> salaries = RandomEmployee.salaryGenerator(newEmployee);
+        for (Salary salary : salaries) {
+            newEmployee.addSalary(salary);
+        }
+        saveEmployeeToFile(newEmployee, FILENAME);
+        resultTextArea.appendText("Random employee generated and added:\n");
+        resultTextArea.appendText(newEmployee.toString() + "\n");
+    }
+
+
+    @FXML
+    private void handleAddDepartment(ActionEvent event) {
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Add Department");
+        idDialog.setHeaderText(null);
+        idDialog.setContentText("Enter department ID:");
+        Optional<String> idResult = idDialog.showAndWait();
+
+        int departmentId;
+        if (idResult.isPresent()) {
+            try {
+                departmentId = Integer.parseInt(idResult.get());
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid department ID.");
                 return;
+            }
+        } else {
+            return; // User canceled the dialog
         }
 
-        Employee.changeSalary(id, newSalary, FILENAME);
-        System.out.println("Salary updated for user ID " + id);
+        TextInputDialog nameDialog = new TextInputDialog();
+        nameDialog.setTitle("Add Department");
+        nameDialog.setHeaderText(null);
+        nameDialog.setContentText("Enter department name:");
+        Optional<String> nameResult = nameDialog.showAndWait();
+
+        if (nameResult.isPresent()) {
+            String departmentName = nameResult.get();
+            // Call the method to add department
+            Organization.addDepartment(departmentId, departmentName);
+            resultTextArea.appendText("Department added successfully.\n");
+        }
+    }
+
+
+    @FXML
+    private void handleCountEmployeesInDepartment(ActionEvent event) {
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Count Employees in Department");
+        idDialog.setHeaderText(null);
+        idDialog.setContentText("Enter department ID:");
+        Optional<String> idResult = idDialog.showAndWait();
+
+        int departmentId;
+        if (idResult.isPresent()) {
+            try {
+                departmentId = Integer.parseInt(idResult.get());
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid department ID.");
+                return;
+            }
+        } else {
+            return; // User canceled the dialog
+        }
+
+        int count = Department.countEmployeesInDepartment(departmentId);
+        resultTextArea.appendText("Total employees in department " + departmentId + ": " + count + "\n");
+    }
+
+
+    @FXML
+    private void handleChangeEmployeeDepartment(ActionEvent event) {
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Change Employee Department");
+        idDialog.setHeaderText(null);
+        idDialog.setContentText("Enter employee ID:");
+        Optional<String> idResult = idDialog.showAndWait();
+
+        int employeeId;
+        if (idResult.isPresent()) {
+            try {
+                employeeId = Integer.parseInt(idResult.get());
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid employee ID.");
+                return;
+            }
+        } else {
+            return; // User canceled the dialog
+        }
+
+        TextInputDialog newIdDialog = new TextInputDialog();
+        newIdDialog.setTitle("Change Employee Department");
+        newIdDialog.setHeaderText(null);
+        newIdDialog.setContentText("Enter new department ID:");
+        Optional<String> newIdResult = newIdDialog.showAndWait();
+
+        int newDepartmentId;
+        if (newIdResult.isPresent()) {
+            try {
+                newDepartmentId = Integer.parseInt(newIdResult.get());
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid department ID.");
+                return;
+            }
+        } else {
+            return; // User canceled the dialog
+        }
+
+        Organization.changeEmployeeDepartment(employeeId, newDepartmentId, FILENAME);
+        resultTextArea.appendText("Employee " + employeeId + " moved to department " + newDepartmentId + " successfully.\n");
+    }
+
+    private void saveEmployeeToFile(Employee employee, String filename) {
+        System.out.println("Saving employee to file...");
+        Set<Employee> employees = Employee.readEmployeesFromFile("Employees.ser");
+
+        employees.add(employee);
+        System.out.println("Employee added to set: " + employee);
+
+        try (FileOutputStream fileOut = new FileOutputStream("Employees.ser");
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(employees);
+            System.out.println("Employee data is saved in Employees.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
     }
 
     @FXML
-    private void handleViewEmployeesButtonAction(ActionEvent event) {
-        // منطق مشاهده کارمندان
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Employees Information");
-        alert.setHeaderText(null);
-        alert.setContentText("Employee details...");
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void handleLogoutButtonAction(ActionEvent event) {
+    private void handleLogout(ActionEvent event) {
         try {
-            Parent login = FXMLLoader.load(getClass().getResource("/login.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(login));
+            Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to load login FXML file.");
         }
     }
 
-    public void viewPaymentHistory(ActionEvent event) {
+    private int getUserInputAsInt(String prompt) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Input Required");
+        dialog.setHeaderText(null);
+        dialog.setContentText(prompt);
+        Optional<String> result = dialog.showAndWait();
+        try {
+            return result.map(Integer::parseInt).orElse(-1);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number.");
+            return -1;
+        }
     }
 
-    public void showAllEmployees(ActionEvent event) {
-    }
-
-    public void showAllManagers(ActionEvent event) {
-    }
-
-    public void updateProfile(ActionEvent event) {
-    }
-
-    public void logOut(ActionEvent event) {
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

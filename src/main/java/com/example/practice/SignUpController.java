@@ -67,12 +67,15 @@ public class SignUpController {
 
     @FXML
     private ComboBox<Boolean> activeSalaryComboBox;
+    @FXML
+    private ComboBox<Activity> inactiveReasonComboBox; // Add this ComboBox for inactive reasons
 
     @FXML
     private void initialize() {
         managerComboBox.setItems(FXCollections.observableArrayList(true, false));
         salaryTypeComboBox.setItems(FXCollections.observableArrayList("Fixed", "Hourly", "Commission", "Base Plus Commission"));
         activeSalaryComboBox.setItems(FXCollections.observableArrayList(true, false));
+        inactiveReasonComboBox.setItems(FXCollections.observableArrayList(Activity.values())); // Set items for the ComboBox
 
         salaryTypeComboBox.setOnAction(event -> {
             String selectedSalaryType = salaryTypeComboBox.getValue();
@@ -103,7 +106,14 @@ public class SignUpController {
                     break;
             }
         });
+
+        activeSalaryComboBox.setOnAction(event -> {
+            boolean isActive = activeSalaryComboBox.getValue();
+            inactiveReasonComboBox.setDisable(isActive);
+        });
     }
+
+
 
     @FXML
     private void onSignUpButtonClick() {
@@ -121,7 +131,7 @@ public class SignUpController {
             boolean isManager = managerComboBox.getValue();
             String salaryType = salaryTypeComboBox.getValue();
             boolean isActive = activeSalaryComboBox.getValue();
-            String employeeId = employeeIdTextField.getText().trim();
+            int employeeId = Integer.parseInt(employeeIdTextField.getText().trim());
             LocalDate salaryStartDate = salaryStartDatePicker.getValue();
             LocalDate salaryEndDate = salaryEndDatePicker.getValue();
 
@@ -135,6 +145,20 @@ public class SignUpController {
                 throw new IllegalArgumentException("Passwords do not match.");
             }
 
+            if (isUsernameExists(username, "Employees.ser")) {
+                throw new IllegalArgumentException("Username already exists.");
+            }
+
+            if (isEmployeeIdExists(employeeId, "Employees.ser")) {
+                throw new IllegalArgumentException("Employee ID already exists.");
+            }
+
+            Set<Employee> employees = readEmployeesFromFile("Employees.ser");
+
+            if (isManager && isDepartmentHasManager(departmentId, employees)) {
+                throw new IllegalArgumentException("The department already has a manager.");
+            }
+
             double salary1 = Double.parseDouble(salaryField1.getText().trim());
             double salary2 = salaryField2.isVisible() ? Double.parseDouble(salaryField2.getText().trim()) : 0;
             double salary3 = salaryField3.isVisible() ? Double.parseDouble(salaryField3.getText().trim()) : 0;
@@ -143,7 +167,9 @@ public class SignUpController {
             java.util.Date salaryStartDateConverted = java.sql.Date.valueOf(salaryStartDate);
             java.util.Date salaryEndDateConverted = java.sql.Date.valueOf(salaryEndDate);
 
-            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive);
+            Activity inactiveReason = isActive ? null : inactiveReasonComboBox.getValue();
+
+            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive, inactiveReason);
 
             saveEmployeeToFile(employee);
 
@@ -153,7 +179,6 @@ public class SignUpController {
             e.printStackTrace();
         }
     }
-
 
     private static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = null;
@@ -189,6 +214,36 @@ public class SignUpController {
         }
     }
 
+
+    public static boolean isUsernameExists(String username, String filename) {
+        Set<Employee> employees = readEmployeesFromFile(filename);
+        for (Employee employee : employees) {
+            if (employee.getUserName().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isEmployeeIdExists(int id, String filename) {
+        Set<Employee> employees = readEmployeesFromFile(filename);
+        for (Employee employee : employees) {
+            if (employee.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Check if a department already has a manager
+    public boolean isDepartmentHasManager(int departmentId, Set<Employee> employees) {
+        for (Employee employee : employees) {
+            if (employee.isManager() && employee.getDepartmentId() == departmentId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @FXML
     private void switchToLogin(ActionEvent event) {
