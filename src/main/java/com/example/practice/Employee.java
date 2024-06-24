@@ -57,7 +57,11 @@ public class Employee implements Serializable {
         this.status = status;
         this.salaries = new ArrayList<>();
         this.departmentHistory = new ArrayList<>(); // Initialize the departmentHistory list
-        this.managerBaseSalary = managerBaseSalary;
+        if (isManager) {
+            this.managerBaseSalary = managerBaseSalary;
+        } else {
+            this.managerBaseSalary = 0; // Set default or handle as needed
+        }
         this.archiveHistory = new ArrayList<>();
 
     }
@@ -76,6 +80,8 @@ public class Employee implements Serializable {
         this.salaries = new ArrayList<>();
         this.isArchived = isActive;
         this.inactiveReason = inactiveReason;
+        this.departmentHistory = new ArrayList<>(); // Initialize departmentHistory
+
 
         // Initialize salaries based on salaryType
         Date startDate = new Date(salaryStartDate.getDate(), salaryStartDate.getMonth() + 1, salaryStartDate.getYear() + 1900);
@@ -94,6 +100,12 @@ public class Employee implements Serializable {
             case "Base Plus Commission":
                 this.salaries.add(new BasePlusCommission(startDate, endDate, isActive, this, salary1, salary3, salary2));
                 break;
+        }
+
+        if (isManager) {
+            this.managerBaseSalary = salary1; // Assign manager base salary
+        } else {
+            this.managerBaseSalary = 0; // Set default value or handle as needed
         }
     }
     
@@ -174,6 +186,10 @@ public class Employee implements Serializable {
     public double getManagerBaseSalary() {
         return managerBaseSalary;
     }
+    public void setManagerBaseSalary(double managerBaseSalary) {
+        this.managerBaseSalary = managerBaseSalary;
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }

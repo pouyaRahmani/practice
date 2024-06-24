@@ -55,6 +55,8 @@ public class SignUpController {
 
     @FXML
     private TextField salaryField3;
+    @FXML
+    private TextField managerBaseSalaryTextField;
 
     @FXML
     private TextField employeeIdTextField;
@@ -66,15 +68,19 @@ public class SignUpController {
     private DatePicker salaryEndDatePicker;
 
     @FXML
-    private ComboBox<Boolean> activeSalaryComboBox;
+    private ComboBox<Boolean> arciveEmployeeComboBox;
     @FXML
     private ComboBox<Activity> inactiveReasonComboBox; // Add this ComboBox for inactive reasons
+    private Organization organization;
+    public SignUpController() {
+        organization = new Organization(); // Initialize the Organization instance
+    }
 
     @FXML
     private void initialize() {
         managerComboBox.setItems(FXCollections.observableArrayList(true, false));
         salaryTypeComboBox.setItems(FXCollections.observableArrayList("Fixed", "Hourly", "Commission", "Base Plus Commission"));
-        activeSalaryComboBox.setItems(FXCollections.observableArrayList(true, false));
+        arciveEmployeeComboBox.setItems(FXCollections.observableArrayList(false, true));
         inactiveReasonComboBox.setItems(FXCollections.observableArrayList(Activity.values())); // Set items for the ComboBox
 
         salaryTypeComboBox.setOnAction(event -> {
@@ -107,9 +113,18 @@ public class SignUpController {
             }
         });
 
-        activeSalaryComboBox.setOnAction(event -> {
-            boolean isActive = activeSalaryComboBox.getValue();
-            inactiveReasonComboBox.setDisable(isActive);
+        arciveEmployeeComboBox.setOnAction(event -> {
+            boolean isArchived = arciveEmployeeComboBox.getValue();
+            inactiveReasonComboBox.setDisable(!isArchived);
+            inactiveReasonComboBox.setVisible(isArchived);
+        });
+        // Configure managerBaseSalaryTextField visibility based on managerComboBox selection
+        managerComboBox.setOnAction(event -> {
+            boolean isManager = managerComboBox.getValue();
+            managerBaseSalaryTextField.setVisible(isManager);
+            if (!isManager) {
+                managerBaseSalaryTextField.clear(); // Clear the field if not visible
+            }
         });
     }
 
@@ -130,7 +145,7 @@ public class SignUpController {
             int departmentId = Integer.parseInt(departmentIdTextField.getText().trim());
             boolean isManager = managerComboBox.getValue();
             String salaryType = salaryTypeComboBox.getValue();
-            boolean isActive = activeSalaryComboBox.getValue();
+            boolean isActive = arciveEmployeeComboBox.getValue();
             int employeeId = Integer.parseInt(employeeIdTextField.getText().trim());
             LocalDate salaryStartDate = salaryStartDatePicker.getValue();
             LocalDate salaryEndDate = salaryEndDatePicker.getValue();
@@ -152,6 +167,10 @@ public class SignUpController {
             if (isEmployeeIdExists(employeeId, "Employees.ser")) {
                 throw new IllegalArgumentException("Employee ID already exists.");
             }
+            // Check if the department ID is valid
+            if (!organization.isValidDepartmentId(departmentId)) {
+                throw new IllegalArgumentException("Invalid department ID.");
+            }
 
             Set<Employee> employees = readEmployeesFromFile("Employees.ser");
 
@@ -162,6 +181,8 @@ public class SignUpController {
             double salary1 = Double.parseDouble(salaryField1.getText().trim());
             double salary2 = salaryField2.isVisible() ? Double.parseDouble(salaryField2.getText().trim()) : 0;
             double salary3 = salaryField3.isVisible() ? Double.parseDouble(salaryField3.getText().trim()) : 0;
+            double managerBaseSalary = managerBaseSalaryTextField.isVisible() ? Double.parseDouble(managerBaseSalaryTextField.getText().trim()) : 0;
+
 
             java.util.Date birthDateConverted = java.sql.Date.valueOf(birthDate);
             java.util.Date salaryStartDateConverted = java.sql.Date.valueOf(salaryStartDate);
@@ -170,6 +191,10 @@ public class SignUpController {
             Activity inactiveReason = isActive ? null : inactiveReasonComboBox.getValue();
 
             Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive, inactiveReason);
+            if (isManager) {
+                employee.setManagerBaseSalary(managerBaseSalary);
+            }
+            employee.addDepartmentHistory(departmentId);
 
             saveEmployeeToFile(employee);
 

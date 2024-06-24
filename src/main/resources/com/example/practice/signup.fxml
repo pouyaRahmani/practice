@@ -49,7 +49,7 @@
             <TextField fx:id="departmentIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
             <Label text="Manager Base Salary:" GridPane.columnIndex="0" GridPane.rowIndex="18" />
-            <TextField fx:id="managerBaseSalaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+            <TextField fx:id="managerBaseSalaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="18" visible="false" />
 
             <Label text="Is Manager:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
             <ComboBox fx:id="managerComboBox" GridPane.columnIndex="1" GridPane.rowIndex="8">
@@ -91,12 +91,12 @@
             <Label text="Salary End Date:" GridPane.columnIndex="0" GridPane.rowIndex="15" />
             <DatePicker fx:id="salaryEndDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="15" />
 
-            <Label text="Is Active Salary:" GridPane.columnIndex="0" GridPane.rowIndex="16" />
-            <ComboBox fx:id="activeSalaryComboBox" GridPane.columnIndex="1" GridPane.rowIndex="16">
+            <Label text=" Archive:" GridPane.columnIndex="0" GridPane.rowIndex="16" />
+            <ComboBox fx:id="arciveEmployeeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="16">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-                        <Boolean fx:value="true" />
                         <Boolean fx:value="false" />
+                        <Boolean fx:value="true" />
                     </FXCollections>
                 </items>
             </ComboBox>
