@@ -13,10 +13,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class EmployeeDashboardController {
+public class EmployeeDashboardController implements EmployeeDashboardControllerInterface {
 
     @FXML
     private TextArea resultTextArea;
@@ -27,9 +28,9 @@ public class EmployeeDashboardController {
     public EmployeeDashboardController(Employee employee) {
         this.employee = employee;
     }
-
+@Override
     @FXML
-    private void handleViewEarningsById(ActionEvent event) {
+public void handleViewEarningsById(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID:");
         if (id != -1) {
@@ -37,9 +38,9 @@ public class EmployeeDashboardController {
             resultTextArea.appendText("Total earnings: " + earnings);
         }
     }
-
+@Override
     @FXML
-    private void handleViewPaymentHistory(ActionEvent event) {
+public void handleViewPaymentHistory(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter employee ID:");
         if (id != -1) {
@@ -60,9 +61,9 @@ public class EmployeeDashboardController {
         }
     }
 
-
+@Override
     @FXML
-    private void handleSearchUserById(ActionEvent event) {
+public void handleSearchUserById(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID:");
         if (id != -1) {
@@ -74,9 +75,9 @@ public class EmployeeDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleSearchUserBySalaryType(ActionEvent event) {
+public void handleSearchUserBySalaryType(ActionEvent event) {
         resultTextArea.clear();
         int salaryTypeChoice = getUserInputAsInt("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission):");
         if (salaryTypeChoice != -1) {
@@ -111,9 +112,9 @@ public class EmployeeDashboardController {
         }
     }
 
-
+@Override
     @FXML
-    private void handleShowAllEmployees(ActionEvent event) {
+public void handleShowAllEmployees(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
         resultTextArea.appendText("All employees:\n");
@@ -121,9 +122,20 @@ public class EmployeeDashboardController {
             resultTextArea.appendText(employee.toString() + "\n");
         }
     }
-
+    @Override
     @FXML
-    private void handleShowAllManagers(ActionEvent event) {
+    public void handleViewAllArchivedEmployees() {
+        List<Employee> archivedEmployees = Employee.showAllArchivedEmployees(FILENAME);
+        resultTextArea.clear();
+        resultTextArea.appendText("Total archived employees: " + archivedEmployees.size() + "\n\n");
+        resultTextArea.appendText("Archived Employee list:\n");
+        for (Employee employee : archivedEmployees) {
+            resultTextArea.appendText(employee.toString() + "\n\n");
+        }
+    }
+    @Override
+    @FXML
+    public void handleShowAllManagers(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
         resultTextArea.appendText("All managers:\n");
@@ -133,9 +145,9 @@ public class EmployeeDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleUpdateProfile(ActionEvent event) {
+public void handleUpdateProfile(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter employee ID:");
         if (id != -1) {
@@ -212,9 +224,9 @@ public class EmployeeDashboardController {
     }
 
 
-
+@Override
     @FXML
-    private void handleViewDepartmentEarnings(ActionEvent event) {
+public void handleViewDepartmentEarnings(ActionEvent event) {
         resultTextArea.clear();
         int departmentId = getUserInputAsInt("Enter department ID:");
         if (departmentId != -1) {
@@ -226,16 +238,16 @@ public class EmployeeDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleViewAllEmployeesEarnings(ActionEvent event) {
+public void handleViewAllEmployeesEarnings(ActionEvent event) {
         resultTextArea.clear();
         double totalEarnings = Employee.calculateAllEmployeesEarnings(FILENAME);
         resultTextArea.appendText("Total earnings of all employees: " + totalEarnings);
     }
-
+@Override
     @FXML
-    private void handleLogout(ActionEvent event) {
+public void handleLogout(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

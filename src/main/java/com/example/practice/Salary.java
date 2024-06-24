@@ -7,11 +7,19 @@ public abstract class Salary implements Serializable {
     protected Date endDate;
     protected boolean activeSalary;
     protected Employee employee;
+    protected long monthsWorked;
+    protected long daysWorked;
 
     public Salary(Date startDate, Date endDate, boolean activeSalary, Employee employee) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.activeSalary = activeSalary;
+        this.employee = employee;
+        this.monthsWorked = Date.monthsBetween(startDate, endDate);
+        this.daysWorked = Date.daysBetween(startDate, endDate);
+    }
+
+    public void setEmployee(Employee employee) {
         this.employee = employee;
     }
 
@@ -31,12 +39,13 @@ class Fixed extends Salary {
 
     @Override
     public double getAmount() {
-        return monthlySalary;
+        double amount = monthlySalary * monthsWorked + employee.getManagerBaseSalary();
+        return amount;
     }
 
     @Override
     public String toString() {
-        return "Fixed Salary: " + monthlySalary;
+        return "Fixed Salary(1 month): " + monthlySalary + " months worked: " + monthsWorked + ", Total: " + getAmount();
     }
 }
 
@@ -52,12 +61,13 @@ class HourlyWage extends Salary {
 
     @Override
     public double getAmount() {
-        return hourlyWage * hoursWorked;
+        double amount = hourlyWage * hoursWorked * daysWorked + employee.getManagerBaseSalary();
+        return amount;
     }
 
     @Override
     public String toString() {
-        return "Hourly Wage: " + hourlyWage + ", Hours Worked: " + hoursWorked + ", Total: " + getAmount();
+        return "Hourly Wage: " + hourlyWage + ", Hours Worked: " + hoursWorked + ", Days Worked: " + daysWorked + ", Total: " + getAmount();
     }
 }
 
@@ -73,12 +83,13 @@ class Commission extends Salary {
 
     @Override
     public double getAmount() {
-        return grossSales * commissionRate;
+        double amount = grossSales * commissionRate + employee.getManagerBaseSalary();
+        return amount;
     }
 
     @Override
     public String toString() {
-        return "Commission: Gross sales: " + grossSales + " at Commission rate: " + commissionRate + ", Total: " + getAmount();
+        return "Commission: Gross sales " + grossSales + " at Commission rate " + commissionRate + ", Total: " + getAmount();
     }
 }
 
@@ -96,11 +107,12 @@ class BasePlusCommission extends Salary {
 
     @Override
     public double getAmount() {
-        return baseSalary + (grossSales * commissionRate);
+        double amount = (baseSalary * monthsWorked) + (grossSales * commissionRate) + employee.getManagerBaseSalary();
+        return amount;
     }
 
     @Override
     public String toString() {
-        return "Base Plus Commission: Base salary: " + baseSalary + " + Gross sales: " + grossSales + " at Commission rate: " + commissionRate + ", Total: " + getAmount();
+        return "Base Plus Commission: Base salary: " + baseSalary + " * " + monthsWorked + " months + Gross sales: " + grossSales + " at Commission rate: " + commissionRate + ", Total: " + getAmount();
     }
 }

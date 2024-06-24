@@ -22,10 +22,11 @@
             <Button text="Search user by Salary Type" onAction="#handleSearchUserBySalaryType" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
             <Button text="Show all employees" onAction="#handleShowAllEmployees" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
             <Button text="Show all managers" onAction="#handleShowAllManagers" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <Button text="Update profile" onAction="#handleUpdateProfile" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-            <Button text="View department earnings" onAction="#handleViewDepartmentEarnings" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-            <Button text="View all employees' earnings" onAction="#handleViewAllEmployeesEarnings" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-            <Button text="Log out" onAction="#handleLogout" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <Button text="Show all archive employees" onAction="#handleViewAllArchivedEmployees" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <Button text="Update profile" onAction="#handleUpdateProfile" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <Button text="View department earnings" onAction="#handleViewDepartmentEarnings" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+            <Button text="View all employees' earnings" onAction="#handleViewAllEmployeesEarnings" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <Button text="Log out" onAction="#handleLogout" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
         </GridPane>
         <Label text="Result:" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
         <TextArea fx:id="resultTextArea" editable="false" wrapText="true" prefHeight="600.0" prefWidth="500.0"/>

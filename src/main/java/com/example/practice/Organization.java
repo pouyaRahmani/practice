@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class Organization {
+public class Organization implements OrganizationInterface{
     private static final String FILENAME = "DepartmentList.ser";
     private List<Department> departments;
 
@@ -13,27 +13,27 @@ public class Organization {
         departments = new ArrayList<>();
         loadDepartments();
     }
-
-    public static void addDepartment(int id, String name) {
+    @Override
+    public  void addDepartment(int id, String name) {
         Department department = new Department(id, name);
         List<Department> departments = loadDepartmentsFromFile();
         departments.add(department);
         saveDepartmentsToFile(departments);
     }
-
-    public static void showAllDepartments() {
-        List<Department> departments = loadDepartmentsFromFile();
-        System.out.println("All Departments:");
+    @Override
+    public List<String> showAllDepartments() {
+        List<String> departmentList = new ArrayList<>();
         for (Department department : departments) {
-            System.out.println(department);
+            departmentList.add(department.toString());
         }
+        return departmentList;
     }
 
     public List<Department> getDepartments() {
         return departments;
     }
-
-    private void loadDepartments() {
+@Override
+    public void loadDepartments() {
         File file = new File(FILENAME);
         if (file.exists()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILENAME))) {
@@ -68,8 +68,8 @@ public class Organization {
         }
         return departments;
     }
-
-    private void saveDepartments() {
+@Override
+    public void saveDepartments() {
         saveDepartmentsToFile(departments);
     }
 
@@ -80,8 +80,8 @@ public class Organization {
             e.printStackTrace();
         }
     }
-
-    public static boolean isValidDepartmentId(int id) {
+@Override
+    public  boolean isValidDepartmentId(int id) {
         List<Department> departments = loadDepartmentsFromFile();
         for (Department department : departments) {
             if (department.getId() == id) {
@@ -90,8 +90,8 @@ public class Organization {
         }
         return false;
     }
-
-    public static void changeEmployeeDepartment(int employeeId, int newDepartmentId, String filename) {
+@Override
+    public  void changeEmployeeDepartment(int employeeId, int newDepartmentId, String filename) {
         if (!isValidDepartmentId(newDepartmentId)) {
             System.out.println("Invalid department ID.");
             return;

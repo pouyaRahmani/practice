@@ -14,24 +14,23 @@ import javafx.stage.Stage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-public class ManagerDashboardController {
+public class ManagerDashboardController implements ManagerDashboardControllerInterface {
 
     @FXML
     private TextArea resultTextArea;
 
     private Employee employee;
     private static final String FILENAME = "Employees.ser";
+    private Organization organization =new Organization();
 
     public ManagerDashboardController(Employee employee) {
         this.employee = employee;
     }
-
+    @Override
     @FXML
-    private void handleViewEarningsById(ActionEvent event) {
+    public void handleViewEarningsById(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID:");
         if (id != -1) {
@@ -39,9 +38,9 @@ public class ManagerDashboardController {
             resultTextArea.appendText("Total earnings: " + earnings);
         }
     }
-
+@Override
     @FXML
-    private void handleViewPaymentHistory(ActionEvent event) {
+public void handleViewPaymentHistory(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter employee ID:");
         if (id != -1) {
@@ -62,9 +61,9 @@ public class ManagerDashboardController {
         }
     }
 
-
+@Override
     @FXML
-    private void handleSearchUserById(ActionEvent event) {
+public void handleSearchUserById(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID:");
         if (id != -1) {
@@ -77,8 +76,9 @@ public class ManagerDashboardController {
         }
     }
 
+    @Override
     @FXML
-    private void handleSearchUserBySalaryType(ActionEvent event) {
+    public void handleSearchUserBySalaryType(ActionEvent event) {
         resultTextArea.clear();
         int salaryTypeChoice = getUserInputAsInt("Enter salary type (1: Fixed, 2: Hourly, 3: Commission, 4: Base Plus Commission):");
         if (salaryTypeChoice != -1) {
@@ -113,9 +113,9 @@ public class ManagerDashboardController {
         }
     }
 
-
+@Override
     @FXML
-    private void handleShowAllEmployees(ActionEvent event) {
+public void handleShowAllEmployees(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
         resultTextArea.appendText("All employees:\n");
@@ -123,9 +123,20 @@ public class ManagerDashboardController {
             resultTextArea.appendText(employee.toString() + "\n");
         }
     }
-
+    @Override
     @FXML
-    private void handleShowAllManagers(ActionEvent event) {
+    public void handleViewAllArchivedEmployees() {
+        List<Employee> archivedEmployees = Employee.showAllArchivedEmployees(FILENAME);
+        resultTextArea.clear();
+        resultTextArea.appendText("Total archived employees: " + archivedEmployees.size() + "\n\n");
+        resultTextArea.appendText("Archived Employee list:\n");
+        for (Employee employee : archivedEmployees) {
+            resultTextArea.appendText(employee.toString() + "\n\n");
+        }
+    }
+@Override
+    @FXML
+public void handleShowAllManagers(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
         resultTextArea.appendText("All managers:\n");
@@ -135,9 +146,9 @@ public class ManagerDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleUpdateProfile(ActionEvent event) {
+public void handleUpdateProfile(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter employee ID:");
         if (id != -1) {
@@ -212,9 +223,9 @@ public class ManagerDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleViewDepartmentEarnings(ActionEvent event) {
+public void handleViewDepartmentEarnings(ActionEvent event) {
         resultTextArea.clear();
         int departmentId = getUserInputAsInt("Enter department ID:");
         if (departmentId != -1) {
@@ -226,16 +237,16 @@ public class ManagerDashboardController {
             }
         }
     }
-
+@Override
     @FXML
-    private void handleViewAllEmployeesEarnings(ActionEvent event) {
+public void handleViewAllEmployeesEarnings(ActionEvent event) {
         resultTextArea.clear();
         double totalEarnings = Employee.calculateAllEmployeesEarnings(FILENAME);
         resultTextArea.appendText("Total earnings of all employees: " + totalEarnings);
     }
-
+@Override
     @FXML
-    private void handleArchiveUser(ActionEvent event) {
+public void handleArchiveUser(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID to archive:");
         if (id != -1) {
@@ -245,9 +256,9 @@ public class ManagerDashboardController {
     }
 
 
-
+@Override
     @FXML
-    private void handleChangeSalary(ActionEvent event) {
+public void handleChangeSalary(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter employee ID:");
 
@@ -444,8 +455,9 @@ public class ManagerDashboardController {
             }
         }
     }
+    @Override
     @FXML
-    private void handleGenerateRandomEmployee(ActionEvent event) {
+    public void handleGenerateRandomEmployee(ActionEvent event) {
         resultTextArea.clear();
         Employee newEmployee = RandomEmployee.employeeGenerator(FILENAME);
         ArrayList<Salary> salaries = RandomEmployee.salaryGenerator(newEmployee);
@@ -457,9 +469,9 @@ public class ManagerDashboardController {
         resultTextArea.appendText(newEmployee.toString() + "\n");
     }
 
-
+@Override
     @FXML
-    private void handleAddDepartment(ActionEvent event) {
+public void handleAddDepartment(ActionEvent event) {
         TextInputDialog idDialog = new TextInputDialog();
         idDialog.setTitle("Add Department");
         idDialog.setHeaderText(null);
@@ -487,14 +499,14 @@ public class ManagerDashboardController {
         if (nameResult.isPresent()) {
             String departmentName = nameResult.get();
             // Call the method to add department
-            Organization.addDepartment(departmentId, departmentName);
+            organization.addDepartment(departmentId, departmentName);
             resultTextArea.appendText("Department added successfully.\n");
         }
     }
 
-
+@Override
     @FXML
-    private void handleCountEmployeesInDepartment(ActionEvent event) {
+public void handleCountEmployeesInDepartment(ActionEvent event) {
         TextInputDialog idDialog = new TextInputDialog();
         idDialog.setTitle("Count Employees in Department");
         idDialog.setHeaderText(null);
@@ -517,9 +529,9 @@ public class ManagerDashboardController {
         resultTextArea.appendText("Total employees in department " + departmentId + ": " + count + "\n");
     }
 
-
+@Override
     @FXML
-    private void handleChangeEmployeeDepartment(ActionEvent event) {
+public void handleChangeEmployeeDepartment(ActionEvent event) {
         TextInputDialog idDialog = new TextInputDialog();
         idDialog.setTitle("Change Employee Department");
         idDialog.setHeaderText(null);
@@ -556,7 +568,7 @@ public class ManagerDashboardController {
             return; // User canceled the dialog
         }
 
-        Organization.changeEmployeeDepartment(employeeId, newDepartmentId, FILENAME);
+        organization.changeEmployeeDepartment(employeeId, newDepartmentId, FILENAME);
         resultTextArea.appendText("Employee " + employeeId + " moved to department " + newDepartmentId + " successfully.\n");
     }
 
@@ -576,8 +588,34 @@ public class ManagerDashboardController {
         }
     }
 
+    @Override
     @FXML
-    private void handleLogout(ActionEvent event) {
+    public void handleUnarchiveUser(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID to unarchive:");
+        if (id != -1) {
+            Employee.unarchiveEmployee(id, FILENAME);
+            resultTextArea.appendText("User with ID " + id + " unarchived successfully.");
+        }
+    }
+@Override
+    @FXML
+public void handleViewAllDepartments(ActionEvent event) {
+        resultTextArea.clear();
+        List<Department> departments = organization.getDepartments();
+        if (departments.isEmpty()) {
+            resultTextArea.appendText("No departments found.");
+        } else {
+            resultTextArea.appendText("Departments:\n");
+            for (Department department : departments) {
+                resultTextArea.appendText(department.toString() + "\n");
+            }
+        }
+    }
+
+@Override
+    @FXML
+public void handleLogout(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
