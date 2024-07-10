@@ -145,11 +145,11 @@ public class SignUpController {
             int departmentId = Integer.parseInt(departmentIdTextField.getText().trim());
             boolean isManager = managerComboBox.getValue();
             String salaryType = salaryTypeComboBox.getValue();
-            boolean isActive = arciveEmployeeComboBox.getValue();
+            boolean isActive = arciveEmployeeComboBox.getValue(); // Determine if the employee is archived
             int employeeId = Integer.parseInt(employeeIdTextField.getText().trim());
             LocalDate salaryStartDate = salaryStartDatePicker.getValue();
             LocalDate salaryEndDate = salaryEndDatePicker.getValue();
-            Activity status = inactiveReasonComboBox.getValue();
+            Activity status = isActive ? inactiveReasonComboBox.getValue() : Activity.ACTIVE; // Set status based on archive state
 
             if (firstName.isEmpty() || lastName.isEmpty() || ssn.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty() || salaryType == null ||
@@ -189,7 +189,7 @@ public class SignUpController {
             java.util.Date salaryStartDateConverted = java.sql.Date.valueOf(salaryStartDate);
             java.util.Date salaryEndDateConverted = java.sql.Date.valueOf(salaryEndDate);
 
-            Activity inactiveReason = isActive ? null : inactiveReasonComboBox.getValue();
+            Activity inactiveReason = isActive ? inactiveReasonComboBox.getValue() : null;
 
             Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive,status, inactiveReason);
             if (isManager) {
