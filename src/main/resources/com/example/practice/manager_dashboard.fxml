@@ -56,8 +56,6 @@
                     <Button text="Change Salary" onAction="#handleChangeSalary"/>
                     <Button text="View All Departments" onAction="#handleViewAllDepartments"/>
                     <Button text="UnArchive User" onAction="#handleUnarchiveUser"/>
-                    <Button text="Show all employees" onAction="#handleShowAllEmployees"/>
-                    <Button text="Show all manager" onAction="#handleShowAllManagers"/>
                     <Button text="show all archive employee" onAction="#handleViewAllArchivedEmployees"/>
                     <Button text="Log out" onAction="#handleLogout"/>
 

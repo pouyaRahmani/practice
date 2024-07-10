@@ -1,19 +1,7 @@
 package com.example.practice;
 
-import javafx.scene.control.TextArea;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
 
 public class Employee implements Serializable {
     private String firstName;
@@ -32,6 +20,7 @@ public class Employee implements Serializable {
     private double managerBaseSalary;
     private Activity inactiveReason;
     private ArrayList<ArchiveHistory> archiveHistory;
+
 
 
 
@@ -67,7 +56,7 @@ public class Employee implements Serializable {
     }
 
     // Additional constructor that uses java.util.Date for birthDate
-    public Employee(String firstName, String lastName, String ssn, java.util.Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, int employeeId, java.util.Date salaryStartDate, java.util.Date salaryEndDate, boolean isActive,Activity inactiveReason) {
+    public Employee(String firstName, String lastName, String ssn, java.util.Date birthDate, String username, String password, int departmentId, boolean isManager, String salaryType, double salary1, double salary2, double salary3, int employeeId, java.util.Date salaryStartDate, java.util.Date salaryEndDate, boolean isActive,Activity status,Activity inactiveReason) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.socialSecurityNumber = ssn;
@@ -79,6 +68,7 @@ public class Employee implements Serializable {
         this.id=employeeId;
         this.salaries = new ArrayList<>();
         this.isArchived = isActive;
+        this.status=status;
         this.inactiveReason = inactiveReason;
         this.departmentHistory = new ArrayList<>(); // Initialize departmentHistory
 
@@ -118,29 +108,6 @@ public class Employee implements Serializable {
         return salaries;
     }
 
-    // Method to show payment history
-    public static void showPaymentHistory(String filename, TextArea resultTextArea) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter employee ID: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-
-        Set<Employee> employees = readEmployeesFromFile(filename);
-        for (Employee employee : employees) {
-            if (employee.getId() == id) {
-                System.out.println("Payment History for Employee ID " + id + ":");
-                for (Salary salary : employee.getPaymentHistory()) {
-                    System.out.println(salary);
-                    if (salary.activeSalary) {
-                        System.out.println("(Active Salary)");
-                    }
-                }
-                return;
-            }
-        }
-        System.out.println("Employee not found.");
-    }
-
 
     public static double calculateEarnings(int id, String filename) {
         Set<Employee> employees = readEmployeesFromFile(filename);
@@ -175,13 +142,20 @@ public class Employee implements Serializable {
         return departmentId;
     }
 
-    public boolean isArchived() {
+    public boolean isArchived(boolean b) {
         return isArchived;
+    }
+    public void setArchived(boolean archived) {
+        isArchived = archived;
     }
 
     public Activity getStatus() {
         return status;
     }
+    public void setStatus(Activity status) {
+        this.status = status;
+    }
+
 
     public double getManagerBaseSalary() {
         return managerBaseSalary;
@@ -198,10 +172,6 @@ public class Employee implements Serializable {
     }
     public void setSocialSecurityNumber(String socialSecurityNumber) {
         this.socialSecurityNumber = socialSecurityNumber;
-    }
-
-    public boolean isActive() {
-        return isArchived;
     }
 
     public Activity getInactiveReason() {
@@ -437,4 +407,6 @@ public class Employee implements Serializable {
                 "\nDepartment History=" + departmentHistory +
                 "}\n";
     }
+
+
 }

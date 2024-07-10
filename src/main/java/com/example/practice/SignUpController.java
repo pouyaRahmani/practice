@@ -149,6 +149,7 @@ public class SignUpController {
             int employeeId = Integer.parseInt(employeeIdTextField.getText().trim());
             LocalDate salaryStartDate = salaryStartDatePicker.getValue();
             LocalDate salaryEndDate = salaryEndDatePicker.getValue();
+            Activity status = inactiveReasonComboBox.getValue();
 
             if (firstName.isEmpty() || lastName.isEmpty() || ssn.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty() || salaryType == null ||
@@ -190,7 +191,7 @@ public class SignUpController {
 
             Activity inactiveReason = isActive ? null : inactiveReasonComboBox.getValue();
 
-            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive, inactiveReason);
+            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive,status, inactiveReason);
             if (isManager) {
                 employee.setManagerBaseSalary(managerBaseSalary);
             }

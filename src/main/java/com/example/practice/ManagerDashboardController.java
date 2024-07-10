@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
@@ -244,19 +245,87 @@ public void handleViewAllEmployeesEarnings(ActionEvent event) {
         double totalEarnings = Employee.calculateAllEmployeesEarnings(FILENAME);
         resultTextArea.appendText("Total earnings of all employees: " + totalEarnings);
     }
-@Override
+    @Override
     @FXML
-public void handleArchiveUser(ActionEvent event) {
+    public void handleArchiveUser(ActionEvent event) {
         resultTextArea.clear();
         int id = getUserInputAsInt("Enter user ID to archive:");
         if (id != -1) {
-            Employee.archiveEmployee(id, FILENAME);
-            resultTextArea.appendText("User with ID " + id + " archived successfully.");
+            Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+            for (Employee employee : employees) {
+                if (employee.getId() == id) {
+                    resultTextArea.appendText(employee.toString() + "\n");
+
+                    // Create a ChoiceDialog for selecting the reason for archiving
+                    List<String> choices = Arrays.asList("NO_PAYOFF", "FIRED", "STOPPED_COOPERATING", "RETIREMENT");
+                    ChoiceDialog<String> dialog = new ChoiceDialog<>("NO_PAYOFF", choices);
+                    dialog.setTitle("Select Reason for Archiving");
+                    dialog.setHeaderText("Select reason for archiving the employee:");
+                    dialog.setContentText("Reason:");
+
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        String reason = result.get();
+                        switch (reason) {
+                            case "NO_PAYOFF":
+                                employee.setStatus(Activity.NO_PAYOFF);
+                                break;
+                            case "FIRED":
+                                employee.setStatus(Activity.FIRED);
+                                break;
+                            case "STOPPED_COOPERATING":
+                                employee.setStatus(Activity.STOPPED_COOPERATING);
+                                break;
+                            case "RETIREMENT":
+                                employee.setStatus(Activity.RETIREMENT);
+                                break;
+                            default:
+                                resultTextArea.appendText("Invalid reason selected.\n");
+                                return;
+                        }
+
+                        employee.setArchived(true);
+                        employee.addArchiveHistory(new Date(), true);
+                        Employee.writeEmployeesToFile(employees, FILENAME);
+                        resultTextArea.appendText("Employee archived with status: " + employee.getStatus() + "\n");
+                    }
+                    return;
+                }
+            }
+            resultTextArea.appendText("Employee with ID " + id + " not found.\n");
+        }
+    }
+
+    @Override
+    @FXML
+    public void handleUnarchiveUser(ActionEvent event) {
+        resultTextArea.clear();
+        int id = getUserInputAsInt("Enter user ID to unarchive:");
+        if (id != -1) {
+            Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
+            for (Employee employee : employees) {
+                if (employee.getId() == id) {
+                    if (!employee.isArchived(false)) {
+                        resultTextArea.appendText("Employee is not archived.\n");
+                        return;
+                    }
+
+                    resultTextArea.appendText(employee.toString() + "\n");
+
+                    employee.setArchived(false);
+                    employee.setStatus(Activity.ACTIVE);
+                    employee.addArchiveHistory(new Date(), false);
+                    Employee.writeEmployeesToFile(employees, FILENAME);
+                    resultTextArea.appendText("Employee unarchived successfully.\n");
+                    return;
+                }
+            }
+            resultTextArea.appendText("Employee with ID " + id + " not found.\n");
         }
     }
 
 
-@Override
+    @Override
     @FXML
 public void handleChangeSalary(ActionEvent event) {
         resultTextArea.clear();
@@ -588,16 +657,6 @@ public void handleChangeEmployeeDepartment(ActionEvent event) {
         }
     }
 
-    @Override
-    @FXML
-    public void handleUnarchiveUser(ActionEvent event) {
-        resultTextArea.clear();
-        int id = getUserInputAsInt("Enter user ID to unarchive:");
-        if (id != -1) {
-            Employee.unarchiveEmployee(id, FILENAME);
-            resultTextArea.appendText("User with ID " + id + " unarchived successfully.");
-        }
-    }
 @Override
     @FXML
 public void handleViewAllDepartments(ActionEvent event) {
