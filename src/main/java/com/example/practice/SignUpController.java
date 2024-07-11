@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,8 +73,11 @@ public class SignUpController {
     @FXML
     private ComboBox<Activity> inactiveReasonComboBox; // Add this ComboBox for inactive reasons
     private Organization organization;
+    private final ArrayList<Object> archiveHistory;
+
     public SignUpController() {
         organization = new Organization(); // Initialize the Organization instance
+        this.archiveHistory = new ArrayList<>();
     }
 
     @FXML

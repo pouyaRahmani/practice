@@ -71,6 +71,7 @@ public class Employee implements Serializable {
         this.status=status;
         this.inactiveReason = inactiveReason;
         this.departmentHistory = new ArrayList<>(); // Initialize departmentHistory
+        this.archiveHistory = new ArrayList<>();
 
 
         // Initialize salaries based on salaryType
@@ -405,8 +406,7 @@ public class Employee implements Serializable {
                 "\t\tSSN='" + socialSecurityNumber + '\'' +
                 (activeSalary != null ? "\nActive Salary=" + activeSalary : "") +
                 "\nDepartment History=" + departmentHistory +
+                "\nArchive History=" + archiveHistory +
                 "}\n";
     }
-
-
 }

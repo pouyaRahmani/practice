@@ -114,15 +114,20 @@ public void handleSearchUserById(ActionEvent event) {
         }
     }
 
-@Override
+    @Override
     @FXML
-public void handleShowAllEmployees(ActionEvent event) {
+    public void handleShowAllEmployees(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
-        resultTextArea.appendText("All employees:\n");
+        int employeeCount = 0;
+        resultTextArea.appendText("All employees (excluding managers):\n");
         for (Employee employee : employees) {
-            resultTextArea.appendText(employee.toString() + "\n");
+            if (!employee.isManager()) {
+                resultTextArea.appendText(employee.toString() + "\n");
+                employeeCount++;
+            }
         }
+        resultTextArea.appendText("\nTotal number of employees (excluding managers): " + employeeCount);
     }
     @Override
     @FXML
@@ -135,16 +140,21 @@ public void handleShowAllEmployees(ActionEvent event) {
             resultTextArea.appendText(employee.toString() + "\n\n");
         }
     }
-@Override
+    @Override
     @FXML
-public void handleShowAllManagers(ActionEvent event) {
+    public void handleShowAllManagers(ActionEvent event) {
         resultTextArea.clear();
         Set<Employee> employees = Employee.readEmployeesFromFile(FILENAME);
-        resultTextArea.appendText("All managers:\n");
+        List<Employee> managers = new ArrayList<>();
         for (Employee employee : employees) {
             if (employee.isManager()) {
-                resultTextArea.appendText(employee.toString() + "\n");
+                managers.add(employee);
             }
+        }
+        resultTextArea.appendText("Total number of managers: " + managers.size() + "\n\n");
+        resultTextArea.appendText("All managers:\n");
+        for (Employee manager : managers) {
+            resultTextArea.appendText(manager.toString() + "\n");
         }
     }
 @Override
