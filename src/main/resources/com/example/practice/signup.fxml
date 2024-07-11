@@ -16,7 +16,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practice.SignUpController">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practice.SignUpController"
+      style="-fx-background-color: linear-gradient(to bottom, #2b2b2b, #232526);"
+      prefWidth="500" prefHeight="600">
 
     <children>
         <GridPane alignment="CENTER" hgap="10" vgap="10">
@@ -24,35 +26,55 @@
                 <Insets bottom="25" left="25" right="25" top="25" />
             </padding>
 
-            <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="firstNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="First Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="firstNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField fx:id="lastNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Last Name:" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="lastNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="SSN:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField fx:id="ssnTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="SSN:" GridPane.columnIndex="0" GridPane.rowIndex="2"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="ssnTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Birth Date:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <DatePicker fx:id="birthDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Birth Date:" GridPane.columnIndex="0" GridPane.rowIndex="3"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <DatePicker fx:id="birthDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                        style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <TextField fx:id="usernameTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="4"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="usernameTextField" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-            <PasswordField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="5"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <PasswordField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="5"
+                           style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Confirm Password:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <PasswordField fx:id="confirmPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Confirm Password:" GridPane.columnIndex="0" GridPane.rowIndex="6"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <PasswordField fx:id="confirmPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="6"
+                           style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Department ID:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-            <TextField fx:id="departmentIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="Department ID:" GridPane.columnIndex="0" GridPane.rowIndex="7"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="departmentIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="7"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Manager Base Salary:" GridPane.columnIndex="0" GridPane.rowIndex="18" />
-            <TextField fx:id="managerBaseSalaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="18" visible="false" />
+            <Label text="Manager Base Salary:" GridPane.columnIndex="0" GridPane.rowIndex="18"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="managerBaseSalaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="18" visible="false"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Is Manager:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <ComboBox fx:id="managerComboBox" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <Label text="Is Manager:" GridPane.columnIndex="0" GridPane.rowIndex="8"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <ComboBox fx:id="managerComboBox" GridPane.columnIndex="1" GridPane.rowIndex="8"
+                      style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0;">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <Boolean fx:value="true" />
@@ -61,8 +83,10 @@
                 </items>
             </ComboBox>
 
-            <Label text="Salary Type:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-            <ComboBox fx:id="salaryTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="9">
+            <Label text="Salary Type:" GridPane.columnIndex="0" GridPane.rowIndex="9"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <ComboBox fx:id="salaryTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="9"
+                      style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0;">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Fixed" />
@@ -73,26 +97,40 @@
                 </items>
             </ComboBox>
 
-            <Label text="Salary 1:" GridPane.columnIndex="0" GridPane.rowIndex="10" />
-            <TextField fx:id="salaryField1" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Label text="Salary 1:" GridPane.columnIndex="0" GridPane.rowIndex="10"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="salaryField1" GridPane.columnIndex="1" GridPane.rowIndex="10"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Salary 2:" GridPane.columnIndex="0" GridPane.rowIndex="11" />
-            <TextField fx:id="salaryField2" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Label text="Salary 2:" GridPane.columnIndex="0" GridPane.rowIndex="11"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="salaryField2" GridPane.columnIndex="1" GridPane.rowIndex="11"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Salary 3:" GridPane.columnIndex="0" GridPane.rowIndex="12" />
-            <TextField fx:id="salaryField3" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <Label text="Salary 3:" GridPane.columnIndex="0" GridPane.rowIndex="12"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="salaryField3" GridPane.columnIndex="1" GridPane.rowIndex="12"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Employee ID:" GridPane.columnIndex="0" GridPane.rowIndex="13" />
-            <TextField fx:id="employeeIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <Label text="Employee ID:" GridPane.columnIndex="0" GridPane.rowIndex="13"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <TextField fx:id="employeeIdTextField" GridPane.columnIndex="1" GridPane.rowIndex="13"
+                       style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Salary Start Date:" GridPane.columnIndex="0" GridPane.rowIndex="14" />
-            <DatePicker fx:id="salaryStartDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <Label text="Salary Start Date:" GridPane.columnIndex="0" GridPane.rowIndex="14"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <DatePicker fx:id="salaryStartDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="14"
+                        style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text="Salary End Date:" GridPane.columnIndex="0" GridPane.rowIndex="15" />
-            <DatePicker fx:id="salaryEndDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <Label text="Salary End Date:" GridPane.columnIndex="0" GridPane.rowIndex="15"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <DatePicker fx:id="salaryEndDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="15"
+                        style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0; -fx-background-radius: 5; -fx-border-radius: 5;"/>
 
-            <Label text=" Archive:" GridPane.columnIndex="0" GridPane.rowIndex="16" />
-            <ComboBox fx:id="arciveEmployeeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="16">
+            <Label text=" Archive:" GridPane.columnIndex="0" GridPane.rowIndex="16"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <ComboBox fx:id="arciveEmployeeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="16"
+                      style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0;">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <Boolean fx:value="false" />
@@ -101,8 +139,10 @@
                 </items>
             </ComboBox>
 
-            <Label text="Inactive Reason:" GridPane.columnIndex="0" GridPane.rowIndex="17" />
-            <ComboBox fx:id="inactiveReasonComboBox" GridPane.columnIndex="1" GridPane.rowIndex="17" disable="true">
+            <Label text="Inactive Reason:" GridPane.columnIndex="0" GridPane.rowIndex="17"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 14px;"/>
+            <ComboBox fx:id="inactiveReasonComboBox" GridPane.columnIndex="1" GridPane.rowIndex="17" disable="true"
+                      style="-fx-background-color: #3c3f41; -fx-text-fill: #d0d0d0;">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="NO_PAYOFF" />
@@ -114,8 +154,10 @@
             </ComboBox>
 
             <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="19">
-                <Button onAction="#onSignUpButtonClick" text="Sign Up" />
-                <Button onAction="#switchToLogin" text="Back to Login" />
+                <Button onAction="#onSignUpButtonClick" text="Sign Up"
+                        style="-fx-background-color: linear-gradient(to bottom, #4e9af1, #1c87c9); -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0.5, 0.0, 0.0);"/>
+                <Button onAction="#switchToLogin" text="Back to Login"
+                        style="-fx-background-color: linear-gradient(to bottom, #4e9af1, #1c87c9); -fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 10, 0.5, 0.0, 0.0);"/>
             </HBox>
             <columnConstraints>
                 <ColumnConstraints />

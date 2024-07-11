@@ -154,29 +154,36 @@ public class SignUpController {
             if (firstName.isEmpty() || lastName.isEmpty() || ssn.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty() || salaryType == null ||
                     birthDate == null || salaryStartDate == null || salaryEndDate == null) {
-                throw new IllegalArgumentException("All fields must be filled out.");
+                showAlert(Alert.AlertType.ERROR, "Error", "All fields must be filled out.");
+                return;
             }
 
             if (!password.equals(confirmPassword)) {
-                throw new IllegalArgumentException("Passwords do not match.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Passwords do not match.");
+                return;
             }
 
             if (isUsernameExists(username, "Employees.ser")) {
-                throw new IllegalArgumentException("Username already exists.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Username already exists.");
+                return;
             }
 
             if (isEmployeeIdExists(employeeId, "Employees.ser")) {
-                throw new IllegalArgumentException("Employee ID already exists.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Employee ID already exists.");
+                return;
             }
+
             // Check if the department ID is valid
             if (!organization.isValidDepartmentId(departmentId)) {
-                throw new IllegalArgumentException("Invalid department ID.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Invalid department ID.");
+                return;
             }
 
             Set<Employee> employees = readEmployeesFromFile("Employees.ser");
 
             if (isManager && isDepartmentHasManager(departmentId, employees)) {
-                throw new IllegalArgumentException("The department already has a manager.");
+                showAlert(Alert.AlertType.ERROR, "Error", "The department already has a manager.");
+                return;
             }
 
             double salary1 = Double.parseDouble(salaryField1.getText().trim());
@@ -184,14 +191,13 @@ public class SignUpController {
             double salary3 = salaryField3.isVisible() ? Double.parseDouble(salaryField3.getText().trim()) : 0;
             double managerBaseSalary = managerBaseSalaryTextField.isVisible() ? Double.parseDouble(managerBaseSalaryTextField.getText().trim()) : 0;
 
-
             java.util.Date birthDateConverted = java.sql.Date.valueOf(birthDate);
             java.util.Date salaryStartDateConverted = java.sql.Date.valueOf(salaryStartDate);
             java.util.Date salaryEndDateConverted = java.sql.Date.valueOf(salaryEndDate);
 
             Activity inactiveReason = isActive ? inactiveReasonComboBox.getValue() : null;
 
-            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive,status, inactiveReason);
+            Employee employee = new Employee(firstName, lastName, ssn, birthDateConverted, username, password, departmentId, isManager, salaryType, salary1, salary2, salary3, employeeId, salaryStartDateConverted, salaryEndDateConverted, isActive, status, inactiveReason);
             if (isManager) {
                 employee.setManagerBaseSalary(managerBaseSalary);
             }
@@ -199,12 +205,18 @@ public class SignUpController {
 
             saveEmployeeToFile(employee);
 
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Employee created successfully.");
             System.out.println("Employee created successfully: " + employee);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Invalid number format.");
+        } catch (IllegalArgumentException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error creating employee: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Error creating employee: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
     private static Set<Employee> readEmployeesFromFile(String filename) {
         Set<Employee> employees = null;

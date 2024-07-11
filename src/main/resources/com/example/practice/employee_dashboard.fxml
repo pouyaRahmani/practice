@@ -5,30 +5,64 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx"
+<HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.practice.EmployeeDashboardController">
+      fx:controller="com.example.practice.EmployeeDashboardController"
+      spacing="20"
+      style="-fx-padding: 10px; -fx-background-color: #262626; -fx-text-fill: white;">
+
     <children>
-        <Label text="Employee Dashboard" style="-fx-font-size: 24px;"/>
-        <GridPane hgap="10" vgap="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <Button text="View total earnings by ID" onAction="#handleViewEarningsById" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <Button text="View payment history" onAction="#handleViewPaymentHistory" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <Button text="Search user by ID" onAction="#handleSearchUserById" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <Button text="Search user by Salary Type" onAction="#handleSearchUserBySalaryType" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <Button text="Show all employees" onAction="#handleShowAllEmployees" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <Button text="Show all managers" onAction="#handleShowAllManagers" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <Button text="Show all archive employees" onAction="#handleViewAllArchivedEmployees" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-            <Button text="Update profile" onAction="#handleUpdateProfile" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-            <Button text="View department earnings" onAction="#handleViewDepartmentEarnings" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-            <Button text="View all employees' earnings" onAction="#handleViewAllEmployeesEarnings" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
-            <Button text="Log out" onAction="#handleLogout" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
-        </GridPane>
-        <Label text="Result:" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-        <TextArea fx:id="resultTextArea" editable="false" wrapText="true" prefHeight="600.0" prefWidth="500.0"/>
+        <VBox spacing="10">
+            <Label text="Employee Dashboard" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+
+            <GridPane hgap="10" vgap="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10" />
+                </padding>
+
+                <Button text="View total earnings by ID" onAction="#handleViewEarningsById"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <Button text="View payment history" onAction="#handleViewPaymentHistory"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <Button text="Search user by ID" onAction="#handleSearchUserById"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                <Button text="Search user by Salary Type" onAction="#handleSearchUserBySalaryType"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                <Button text="Show all employees" onAction="#handleShowAllEmployees"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                <Button text="Show all managers" onAction="#handleShowAllManagers"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                <Button text="Show all archive employees" onAction="#handleViewAllArchivedEmployees"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="6" GridPane.columnIndex="0" />
+                <Button text="Update profile" onAction="#handleUpdateProfile"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="7" GridPane.columnIndex="0" />
+                <Button text="View department earnings" onAction="#handleViewDepartmentEarnings"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="8" GridPane.columnIndex="0" />
+                <Button text="View all employees' earnings" onAction="#handleViewAllEmployeesEarnings"
+                        style="-fx-background-color: #666666; -fx-text-fill: white;"
+                        GridPane.rowIndex="9" GridPane.columnIndex="0" />
+                <Button text="Log out" onAction="#handleLogout"
+                        style="-fx-background-color: #ff5252; -fx-text-fill: white; -fx-border-color: #ff1744; -fx-border-width: 1px; -fx-padding: 10px 20px; -fx-font-size: 14px; -fx-border-radius: 5px; -fx-background-radius: 5px;"
+                        GridPane.rowIndex="10" GridPane.columnIndex="0" />
+            </GridPane>
+        </VBox>
+
+        <VBox spacing="10">
+            <Label text="Result:" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" />
+            <TextArea fx:id="resultTextArea" editable="false" wrapText="true" prefHeight="400.0" prefWidth="500.0"
+                      style="-fx-background-color: white; -fx-text-fill: black;" />
+        </VBox>
     </children>
-</VBox>
+</HBox>
