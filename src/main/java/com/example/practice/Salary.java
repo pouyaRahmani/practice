@@ -67,7 +67,7 @@ class HourlyWage extends Salary {
 
     @Override
     public String toString() {
-        return "Hourly Wage: " + hourlyWage + ", Hours Worked: " + hoursWorked + ", Days Worked: " + daysWorked + ", Total: " + getAmount();
+        return "Hourly Wage: " + hourlyWage + ",\tHours Worked: " + hoursWorked + ",\tDays Worked: " + daysWorked + ",\tTotal: " + getAmount();
     }
 }
 
@@ -89,7 +89,7 @@ class Commission extends Salary {
 
     @Override
     public String toString() {
-        return "Commission: Gross sales " + grossSales + " at Commission rate " + commissionRate + ", Total: " + getAmount();
+        return "Commission: Gross sales " + grossSales + "\tat Commission rate " + commissionRate + ",\tTotal: " + getAmount();
     }
 }
 
@@ -113,6 +113,6 @@ class BasePlusCommission extends Salary {
 
     @Override
     public String toString() {
-        return "Base Plus Commission: Base salary: " + baseSalary + " * " + monthsWorked + " months + Gross sales: " + grossSales + " at Commission rate: " + commissionRate + ", Total: " + getAmount();
+        return "Base Plus Commission: Base salary: " + baseSalary + " * " + monthsWorked + "\tmonths + Gross sales: " + grossSales + "\tat Commission rate: " + commissionRate + ",\tTotal: " + getAmount();
     }
 }

@@ -33,6 +33,8 @@ public class LoginController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.setFullScreenExitHint("");
+            stage.setFullScreen(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,6 +66,8 @@ public class LoginController {
                     dashboard = loader.load();
                     Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                     stage.setScene(new Scene(dashboard));
+                    stage.setFullScreenExitHint("");
+                    stage.setFullScreen(true);
                     stage.setTitle("Dashboard");
                     stage.show();
                 } catch (IOException e) {
