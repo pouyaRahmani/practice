@@ -45,7 +45,7 @@ class Fixed extends Salary {
 
     @Override
     public String toString() {
-        return "Fixed Salary(1 month): " + monthlySalary + " months worked: " + monthsWorked + ", Total: " + getAmount();
+        return "Fixed Salary(1 month): " + monthlySalary + "\tmonths worked: " + monthsWorked + ",\tTotal: " + getAmount();
     }
 }
 

@@ -251,68 +251,6 @@ public class Employee implements Serializable {
 
         return archivedEmployeeList;
     }
-    public static void archiveEmployee(int id, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
-        Scanner scanner = new Scanner(System.in);
-
-        for (Employee employee : employees) {
-            if (employee.getId() == id) {
-                System.out.println(employee);
-                employee.isArchived = true;
-
-                System.out.println("Select reason for archiving:");
-                System.out.println("1. NO_PAYOFF");
-                System.out.println("2. FIRED");
-                System.out.println("3. STOPPED_COOPERATING");
-                System.out.println("4. RETIREMENT");
-                int reasonChoice = scanner.nextInt();
-
-                switch (reasonChoice) {
-                    case 1:
-                        employee.status = Activity.NO_PAYOFF;
-                        break;
-                    case 2:
-                        employee.status = Activity.FIRED;
-                        break;
-                    case 3:
-                        employee.status = Activity.STOPPED_COOPERATING;
-                        break;
-                    case 4:
-                        employee.status = Activity.RETIREMENT;
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Setting status to ACTIVE by default.");
-                        employee.status = Activity.ACTIVE;
-                }
-
-                employee.addArchiveHistory(new Date(), true);
-                writeEmployeesToFile(employees, filename);
-                System.out.println("Employee archived with status: " + employee.getStatus());
-                break;
-            }
-        }
-    }
-    public static void unarchiveEmployee(int id, String filename) {
-        Set<Employee> employees = readEmployeesFromFile(filename);
-
-        for (Employee employee : employees) {
-            if (employee.getId() == id) {
-                if (!employee.isArchived) {
-                    System.out.println("Employee is not archived.");
-                    return;
-                }
-
-                System.out.println(employee);
-                employee.isArchived = false;
-                employee.status = Activity.ACTIVE;
-
-                employee.addArchiveHistory(new Date(), false);
-                writeEmployeesToFile(employees, filename);
-                System.out.println("Employee unarchived.");
-                break;
-            }
-        }
-    }
 
     public static void changeSalary(int id, Salary newSalary, String filename) {
         Set<Employee> employees = readEmployeesFromFile(FILENAME);

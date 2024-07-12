@@ -578,8 +578,10 @@ public void handleAddDepartment(ActionEvent event) {
         if (nameResult.isPresent()) {
             String departmentName = nameResult.get();
             // Call the method to add department
-            organization.addDepartment(departmentId, departmentName);
+            if (organization.addDepartment(departmentId, departmentName))
             resultTextArea.appendText("Department added successfully.\n");
+            else
+                resultTextArea.appendText("Department already exists.\n");
         }
     }
 
@@ -647,8 +649,11 @@ public void handleChangeEmployeeDepartment(ActionEvent event) {
             return; // User canceled the dialog
         }
 
-        organization.changeEmployeeDepartment(employeeId, newDepartmentId, FILENAME);
+        if (organization.changeEmployeeDepartment(employeeId, newDepartmentId, FILENAME))
         resultTextArea.appendText("Employee " + employeeId + " moved to department " + newDepartmentId + " successfully.\n");
+        else
+            resultTextArea.appendText("Managers cannot change their departments.\n");
+
     }
 
     private void saveEmployeeToFile(Employee employee, String filename) {
@@ -671,12 +676,12 @@ public void handleChangeEmployeeDepartment(ActionEvent event) {
     @FXML
 public void handleViewAllDepartments(ActionEvent event) {
         resultTextArea.clear();
-        List<Department> departments = organization.getDepartments();
+        List<String> departments = organization.showAllDepartments();
         if (departments.isEmpty()) {
             resultTextArea.appendText("No departments found.");
         } else {
             resultTextArea.appendText("Departments:\n");
-            for (Department department : departments) {
+            for (String department : departments) {
                 resultTextArea.appendText(department.toString() + "\n");
             }
         }

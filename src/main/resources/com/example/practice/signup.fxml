@@ -17,8 +17,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practice.SignUpController"
-      style="-fx-background-color: linear-gradient(to bottom, #2b2b2b, #232526);"
-      prefWidth="500" prefHeight="600">
+      style="-fx-background-color: linear-gradient(to bottom, #2C3E50, #4CA1AF);"
+      prefWidth="1000" prefHeight="800">
 
     <children>
         <GridPane alignment="CENTER" hgap="10" vgap="10">

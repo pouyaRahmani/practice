@@ -74,6 +74,11 @@ public class SignUpController {
     private ComboBox<Activity> inactiveReasonComboBox; // Add this ComboBox for inactive reasons
     private Organization organization;
     private final ArrayList<Object> archiveHistory;
+    private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     public SignUpController() {
         organization = new Organization(); // Initialize the Organization instance
@@ -138,6 +143,9 @@ public class SignUpController {
     private void onSignUpButtonClick() {
         try {
             System.out.println("SignUp button clicked");
+            if (stage != null) {
+                stage.setFullScreen(true);
+            }
 
             String firstName = firstNameTextField.getText().trim();
             String lastName = lastNameTextField.getText().trim();

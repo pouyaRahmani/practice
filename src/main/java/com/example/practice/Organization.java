@@ -14,11 +14,19 @@ public class Organization implements OrganizationInterface{
         loadDepartments();
     }
     @Override
-    public  void addDepartment(int id, String name) {
-        Department department = new Department(id, name);
+    public boolean addDepartment(int id, String name) {
         List<Department> departments = loadDepartmentsFromFile();
+        // add condition to check if department already exists
+        for (Department d : departments) {
+            if (d.getId() == id) {
+                System.out.println("Department already exists.");
+                return false;
+            }
+        }
+        Department department = new Department(id, name);
         departments.add(department);
         saveDepartmentsToFile(departments);
+        return true;
     }
     @Override
     public List<String> showAllDepartments() {
@@ -91,27 +99,24 @@ public class Organization implements OrganizationInterface{
         return false;
     }
 @Override
-    public  void changeEmployeeDepartment(int employeeId, int newDepartmentId, String filename) {
-        if (!isValidDepartmentId(newDepartmentId)) {
-            System.out.println("Invalid department ID.");
-            return;
-        }
+    public boolean changeEmployeeDepartment(int employeeId, int newDepartmentId, String filename) {
 
         Set<Employee> employees = Employee.readEmployeesFromFile(filename);
         for (Employee employee : employees) {
             if (employee.getId() == employeeId) {
                 if (employee.isManager()) {
                     System.out.println("Managers cannot change their departments.");
-                    return;
+                    return false;
                 }
 
                 employee.addDepartmentHistory(newDepartmentId);
                 employee.setDepartmentId(newDepartmentId);
                 Employee.writeEmployeesToFile(employees, filename);
                 System.out.println("Employee department changed successfully.");
-                return;
+                return true;
             }
         }
         System.out.println("Employee not found.");
-    }
+    return false;
+}
 }
